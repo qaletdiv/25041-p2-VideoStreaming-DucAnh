@@ -2,6 +2,7 @@ import { Roboto } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import AppShell from '@/components/AppShell';
 import theme from '@/theme';
 
 const roboto = Roboto({
@@ -23,7 +24,7 @@ export default function RootLayout({ children }) {
                 <AppRouterCacheProvider>
                     <ThemeProvider theme={theme}>
                         <CssBaseline />
-                        {children}
+                        <AppShell>{children}</AppShell>
                     </ThemeProvider>
                 </AppRouterCacheProvider>
             </body>
