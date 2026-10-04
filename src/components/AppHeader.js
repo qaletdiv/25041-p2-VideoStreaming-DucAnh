@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { AppBar, Toolbar, Typography, Button, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useTranslations } from 'next-intl';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function AppHeader({ onMenuClick }) {
     const t = useTranslations('header');
@@ -26,6 +27,7 @@ export default function AppHeader({ onMenuClick }) {
                 >
                     StreamHub
                 </Typography>
+                <LanguageSwitcher />
                 <Button color="inherit" component={Link} href="/login">
                     {t('login')}
                 </Button>

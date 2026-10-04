@@ -7,6 +7,7 @@
     },
     "header": {
         "login": "Log in",
-        "menu": "Menu"
+        "menu": "Menu",
+        "switchLanguage": "Switch language"
     }
 }

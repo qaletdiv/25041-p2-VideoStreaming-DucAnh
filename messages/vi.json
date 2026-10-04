@@ -7,6 +7,7 @@
     },
     "header": {
         "login": "Đăng nhập",
-        "menu": "Menu"
+        "menu": "Menu",
+        "switchLanguage": "Đổi ngôn ngữ"
     }
 }
