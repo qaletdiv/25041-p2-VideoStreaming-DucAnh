@@ -2,15 +2,17 @@
 import Link from 'next/link';
 import { AppBar, Toolbar, Typography, Button, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useTranslations } from 'next-intl';
 
 export default function AppHeader({ onMenuClick }) {
+    const t = useTranslations('header');
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
                 <IconButton
                     color="inherit"
                     edge="start"
-                    aria-label="menu"
+                    aria-label={t('menu')}
                     onClick={onMenuClick}
                     sx={{ mr: 1, display: { md: 'none' } }}
                 >
@@ -25,7 +27,7 @@ export default function AppHeader({ onMenuClick }) {
                     StreamHub
                 </Typography>
                 <Button color="inherit" component={Link} href="/login">
-                    Đăng nhập
+                    {t('login')}
                 </Button>
             </Toolbar>
         </AppBar>

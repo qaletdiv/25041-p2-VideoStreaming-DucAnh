@@ -8,18 +8,20 @@ import HomeIcon from '@mui/icons-material/Home';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
+import { useTranslations } from 'next-intl';
 
 const DRAWER_WIDTH = 240;
 
 const NAV_ITEMS = [
-    { label: 'Trang chủ', href: '/', icon: <HomeIcon /> },
-    { label: 'Tạo Stream', href: '/stream/create', icon: <LiveTvIcon /> },
-    { label: 'Dashboard', href: '/dashboard', icon: <DashboardIcon /> },
-    { label: 'Quản lý người dùng', href: '/admin/users', icon: <PeopleIcon /> },
+    { key: 'home', href: '/', icon: <HomeIcon /> },
+    { key: 'createStream', href: '/stream/create', icon: <LiveTvIcon /> },
+    { key: 'dashboard', href: '/dashboard', icon: <DashboardIcon /> },
+    { key: 'users', href: '/admin/users', icon: <PeopleIcon /> },
 ];
 
 export default function AppSidebar({ mobileOpen, onClose }) {
     const pathname = usePathname();
+    const t = useTranslations('nav');
 
     const content = (
         <Box>
@@ -34,7 +36,7 @@ export default function AppSidebar({ mobileOpen, onClose }) {
                         onClick={onClose}
                     >
                         <ListItemIcon>{item.icon}</ListItemIcon>
-                        <ListItemText primary={item.label} />
+                        <ListItemText primary={t(item.key)} />
                     </ListItemButton>
                 ))}
             </List>
