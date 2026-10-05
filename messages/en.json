@@ -1,0 +1,13 @@
+{
+    "nav": {
+        "home": "Home",
+        "createStream": "Create Stream",
+        "dashboard": "Dashboard",
+        "users": "User Management"
+    },
+    "header": {
+        "login": "Log in",
+        "menu": "Menu",
+        "switchLanguage": "Switch language"
+    }
+}

@@ -4,6 +4,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppShell from '@/components/AppShell';
 import theme from '@/theme';
+import { getLocale } from 'next-intl/server';
+import { NextIntlClientProvider } from 'next-intl';
 
 const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
@@ -17,16 +19,20 @@ export const metadata = {
     description: 'Hệ thống Video Streaming & Live Interaction',
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+    const locale = await getLocale();
+
     return (
-        <html lang="vi" className={roboto.variable}>
+        <html lang={locale} className={roboto.variable}>
             <body>
-                <AppRouterCacheProvider>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        <AppShell>{children}</AppShell>
-                    </ThemeProvider>
-                </AppRouterCacheProvider>
+                <NextIntlClientProvider>
+                    <AppRouterCacheProvider>
+                        <ThemeProvider theme={theme}>
+                            <CssBaseline />
+                            <AppShell>{children}</AppShell>
+                        </ThemeProvider>
+                    </AppRouterCacheProvider>
+                </NextIntlClientProvider>
             </body>
         </html>
     );

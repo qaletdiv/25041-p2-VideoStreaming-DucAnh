@@ -1,0 +1,13 @@
+{
+    "nav": {
+        "home": "Trang chủ",
+        "createStream": "Tạo Stream",
+        "dashboard": "Dashboard",
+        "users": "Quản lý người dùng"
+    },
+    "header": {
+        "login": "Đăng nhập",
+        "menu": "Menu",
+        "switchLanguage": "Đổi ngôn ngữ"
+    }
+}
