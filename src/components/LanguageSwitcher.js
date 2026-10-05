@@ -2,20 +2,22 @@
 import { useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { LOCALES } from '@/i18n/config';
-import { setLocale } from '@/actions/locale';
+import { routing } from '@/i18n/routing';
+import { usePathname, useRouter } from '@/i18n/navigation';
 
 export default function LanguageSwitcher() {
     const t = useTranslations('header');
     const locale = useLocale();
+    const router = useRouter();
+    const pathname = usePathname();
     const [isPending, startTransition] = useTransition();
 
     const handleChange = (event, newLocale) => {
-        // newLocale là null khi bấm lại nút đang chọn; đang chờ server cũng bỏ qua
+        // newLocale là null khi bấm lại nút đang chọn; đang chuyển trang cũng bỏ qua
         if (newLocale === null || newLocale === locale || isPending) return;
 
-        startTransition(async () => {
-            await setLocale(newLocale);
+        startTransition(() => {
+            router.replace(pathname, { locale: newLocale });
         });
     };
 
@@ -43,7 +45,7 @@ export default function LanguageSwitcher() {
                 },
             }}
         >
-            {LOCALES.map((l) => (
+            {routing.locales.map((l) => (
                 <ToggleButton key={l} value={l}>
                     {l.toUpperCase()}
                 </ToggleButton>
