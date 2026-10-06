@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "db:seed": "node --env-file=.env prisma/seed.mjs"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
