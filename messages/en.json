@@ -22,6 +22,14 @@
             "hasAccount": "Already have an account?",
             "goToLogin": "Log in"
         },
+        "login": {
+            "title": "Log in",
+            "email": "Email",
+            "password": "Password",
+            "submit": "Log in",
+            "noAccount": "Don't have an account?",
+            "goToRegister": "Sign up"
+        },
         "errors": {
             "nameMin": "Full name must be at least 2 characters",
             "nameMax": "Full name must be at most 50 characters",
@@ -30,7 +38,10 @@
             "passwordMin": "Password must be at least 8 characters",
             "passwordMax": "Password must be at most 72 characters",
             "passwordMismatch": "Passwords do not match",
-            "serverError": "Something went wrong, please try again"
+            "serverError": "Something went wrong, please try again",
+            "passwordRequired": "Please enter your password",
+            "invalidCredentials": "Incorrect email or password",
+            "accountLocked": "Your account has been locked"
         }
     }
 }
