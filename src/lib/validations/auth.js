@@ -11,3 +11,9 @@ export const registerSchema = z
         message: 'passwordMismatch',
         path: ['confirmPassword'],
     });
+
+
+export const loginSchema = z.object({
+    email: z.string().trim().toLowerCase().pipe(z.email('emailInvalid')),
+    password: z.string().min(1, 'passwordRequired'),
+});
