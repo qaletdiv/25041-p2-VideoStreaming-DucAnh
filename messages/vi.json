@@ -9,5 +9,28 @@
         "login": "Đăng nhập",
         "menu": "Menu",
         "switchLanguage": "Đổi ngôn ngữ"
+    },
+    "auth": {
+        "register": {
+            "title": "Tạo tài khoản",
+            "name": "Họ và tên",
+            "email": "Email",
+            "password": "Mật khẩu",
+            "confirmPassword": "Nhập lại mật khẩu",
+            "submit": "Đăng ký",
+            "success": "Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.",
+            "hasAccount": "Đã có tài khoản?",
+            "goToLogin": "Đăng nhập"
+        },
+        "errors": {
+            "nameMin": "Họ và tên tối thiểu 2 ký tự",
+            "nameMax": "Họ và tên tối đa 50 ký tự",
+            "emailInvalid": "Email không đúng định dạng",
+            "emailTaken": "Email này đã được đăng ký",
+            "passwordMin": "Mật khẩu tối thiểu 8 ký tự",
+            "passwordMax": "Mật khẩu tối đa 72 ký tự",
+            "passwordMismatch": "Mật khẩu nhập lại không khớp",
+            "serverError": "Có lỗi xảy ra, vui lòng thử lại"
+        }
     }
 }

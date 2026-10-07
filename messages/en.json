@@ -9,5 +9,28 @@
         "login": "Log in",
         "menu": "Menu",
         "switchLanguage": "Switch language"
+    },
+    "auth": {
+        "register": {
+            "title": "Create an account",
+            "name": "Full name",
+            "email": "Email",
+            "password": "Password",
+            "confirmPassword": "Confirm password",
+            "submit": "Sign up",
+            "success": "Registration successful! You can now log in.",
+            "hasAccount": "Already have an account?",
+            "goToLogin": "Log in"
+        },
+        "errors": {
+            "nameMin": "Full name must be at least 2 characters",
+            "nameMax": "Full name must be at most 50 characters",
+            "emailInvalid": "Invalid email format",
+            "emailTaken": "This email is already registered",
+            "passwordMin": "Password must be at least 8 characters",
+            "passwordMax": "Password must be at most 72 characters",
+            "passwordMismatch": "Passwords do not match",
+            "serverError": "Something went wrong, please try again"
+        }
     }
 }
