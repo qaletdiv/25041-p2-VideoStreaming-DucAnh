@@ -1,8 +1,13 @@
 'use server';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { registerSchema } from '@/lib/validations/auth';
+import { createSession } from '@/lib/session';
+import { loginSchema, registerSchema } from '@/lib/validations/auth';
+
+// Mã băm giả: để thời gian phản hồi như nhau dù email có tồn tại hay không
+const DUMMY_HASH = bcrypt.hashSync('dummy-password', 10);
 
 export async function registerUser(values) {
     // Không tin dữ liệu từ client: kiểm tra lại bằng cùng schema
@@ -24,6 +29,33 @@ export async function registerUser(values) {
         console.error('[register]', error);
         return { errors: { form: ['serverError'] } };
     }
+
+    return { success: true };
+}
+
+export async function loginUser(values) {
+    const parsed = loginSchema.safeParse(values);
+    if (!parsed.success) {
+        return { errors: z.flattenError(parsed.error).fieldErrors };
+    }
+
+    const { email, password } = parsed.data;
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    // Luôn chạy bcrypt.compare, kể cả khi không có user
+    const isPasswordValid = await bcrypt.compare(password, user?.passwordHash ?? DUMMY_HASH);
+
+    if (!user || !isPasswordValid) {
+        return { errors: { form: ['invalidCredentials'] } };
+    }
+
+    // Chỉ báo "bị khóa" sau khi mật khẩu đã đúng, tránh lộ thông tin cho người lạ
+    if (!user.isActive) {
+        return { errors: { form: ['accountLocked'] } };
+    }
+
+    await createSession(user);
+    revalidatePath('/', 'layout');
 
     return { success: true };
 }
