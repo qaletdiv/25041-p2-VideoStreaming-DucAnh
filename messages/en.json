@@ -8,7 +8,10 @@
     "header": {
         "login": "Log in",
         "menu": "Menu",
-        "switchLanguage": "Switch language"
+        "switchLanguage": "Switch language",
+        "register": "Sign up",
+        "logout": "Log out",
+        "account": "Account"
     },
     "auth": {
         "register": {
