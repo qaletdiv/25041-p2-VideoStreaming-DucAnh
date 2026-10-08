@@ -44,7 +44,8 @@
             "serverError": "Có lỗi xảy ra, vui lòng thử lại",
             "passwordRequired": "Vui lòng nhập mật khẩu",
             "invalidCredentials": "Tài khoản hoặc mật khẩu không chính xác",
-            "accountLocked": "Tài khoản của bạn đã bị khóa"
+            "accountLocked": "Tài khoản của bạn đã bị khóa",
+            "networkError": "Không thể kết nối tới máy chủ, vui lòng thử lại"
         }
     }
 }
