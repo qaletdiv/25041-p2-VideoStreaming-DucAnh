@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
-import { Box, Button, Typography } from '@mui/material';
-import { Link } from '@/i18n/navigation';
+import { Box, Typography } from '@mui/material';
+import LinkButton from '@/components/LinkButton';
 
 export default async function Forbidden() {
     const t = await getTranslations('forbidden');
@@ -13,9 +13,9 @@ export default async function Forbidden() {
             <Typography color="text.secondary" sx={{ mb: 3 }}>
                 {t('description')}
             </Typography>
-            <Button variant="contained" component={Link} href="/">
+            <LinkButton variant="contained" href="/">
                 {t('backHome')}
-            </Button>
+            </LinkButton>
         </Box>
     );
 }
