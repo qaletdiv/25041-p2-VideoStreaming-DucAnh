@@ -8,7 +8,10 @@
     "header": {
         "login": "Đăng nhập",
         "menu": "Menu",
-        "switchLanguage": "Đổi ngôn ngữ"
+        "switchLanguage": "Đổi ngôn ngữ",
+        "register": "Đăng ký",
+        "logout": "Đăng xuất",
+        "account": "Tài khoản"
     },
     "auth": {
         "register": {
@@ -22,6 +25,14 @@
             "hasAccount": "Đã có tài khoản?",
             "goToLogin": "Đăng nhập"
         },
+        "login": {
+            "title": "Đăng nhập",
+            "email": "Email",
+            "password": "Mật khẩu",
+            "submit": "Đăng nhập",
+            "noAccount": "Chưa có tài khoản?",
+            "goToRegister": "Đăng ký"
+        },
         "errors": {
             "nameMin": "Họ và tên tối thiểu 2 ký tự",
             "nameMax": "Họ và tên tối đa 50 ký tự",
@@ -30,7 +41,10 @@
             "passwordMin": "Mật khẩu tối thiểu 8 ký tự",
             "passwordMax": "Mật khẩu tối đa 72 ký tự",
             "passwordMismatch": "Mật khẩu nhập lại không khớp",
-            "serverError": "Có lỗi xảy ra, vui lòng thử lại"
+            "serverError": "Có lỗi xảy ra, vui lòng thử lại",
+            "passwordRequired": "Vui lòng nhập mật khẩu",
+            "invalidCredentials": "Tài khoản hoặc mật khẩu không chính xác",
+            "accountLocked": "Tài khoản của bạn đã bị khóa"
         }
     }
 }

@@ -1,12 +1,14 @@
 'use client';
-import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import { AppBar, Toolbar, Typography, Button, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import LanguageSwitcher from './LanguageSwitcher';
+import UserMenu from './UserMenu';
 
-export default function AppHeader({ onMenuClick }) {
+export default function AppHeader({ user, onMenuClick }) {
     const t = useTranslations('header');
+
     return (
         <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Toolbar>
@@ -19,6 +21,7 @@ export default function AppHeader({ onMenuClick }) {
                 >
                     <MenuIcon />
                 </IconButton>
+
                 <Typography
                     variant="h6"
                     component={Link}
@@ -27,10 +30,27 @@ export default function AppHeader({ onMenuClick }) {
                 >
                     StreamHub
                 </Typography>
+
                 <LanguageSwitcher />
-                <Button color="inherit" component={Link} href="/login">
-                    {t('login')}
-                </Button>
+
+                {user ? (
+                    <UserMenu user={user} />
+                ) : (
+                    <>
+                        <Button color="inherit" component={Link} href="/login">
+                            {t('login')}
+                        </Button>
+                        <Button
+                            color="inherit"
+                            variant="outlined"
+                            component={Link}
+                            href="/register"
+                            sx={{ ml: 1, display: { xs: 'none', sm: 'inline-flex' } }}
+                        >
+                            {t('register')}
+                        </Button>
+                    </>
+                )}
             </Toolbar>
         </AppBar>
     );
