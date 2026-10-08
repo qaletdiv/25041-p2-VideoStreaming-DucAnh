@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from '@/i18n/navigation';
-import { logoutUser } from '@/actions/auth';
+import { apiFetch } from '@/lib/api';
 
 export default function UserMenu({ user }) {
     const t = useTranslations('header');
@@ -19,8 +19,9 @@ export default function UserMenu({ user }) {
     const handleLogout = () => {
         handleClose();
         startTransition(async () => {
-            await logoutUser();
+            await apiFetch('/auth/logout', { method: 'post' });
             router.replace('/');
+            router.refresh();
         });
     };
 
