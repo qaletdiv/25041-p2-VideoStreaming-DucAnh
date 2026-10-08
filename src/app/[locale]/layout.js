@@ -7,6 +7,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme';
 import AppShell from '@/components/AppShell';
 import { routing } from '@/i18n/routing';
+import { getCurrentUser } from '@/lib/session';
 
 const roboto = Roboto({
     weight: ['300', '400', '500', '700'],
@@ -27,6 +28,8 @@ export default async function RootLayout({ children, params }) {
         notFound();
     }
 
+    const user = await getCurrentUser();
+
     return (
         <html lang={locale} className={roboto.variable}>
             <body>
@@ -34,7 +37,7 @@ export default async function RootLayout({ children, params }) {
                     <AppRouterCacheProvider>
                         <ThemeProvider theme={theme}>
                             <CssBaseline />
-                            <AppShell>{children}</AppShell>
+                            <AppShell user={user}>{children}</AppShell>
                         </ThemeProvider>
                     </AppRouterCacheProvider>
                 </NextIntlClientProvider>
