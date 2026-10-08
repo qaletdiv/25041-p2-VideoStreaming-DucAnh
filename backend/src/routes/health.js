@@ -1,7 +1,10 @@
-import { prisma } from '@/lib/prisma';
-import { redis } from '@/lib/redis';
+import { Router } from 'express';
+import { prisma } from '../lib/prisma.js';
+import { redis } from '../lib/redis.js';
 
-export async function GET() {
+const router = Router();
+
+router.get('/', async (req, res) => {
     const status = { postgres: 'down', redis: 'down' };
 
     try {
@@ -12,12 +15,13 @@ export async function GET() {
     }
 
     try {
-        const reply = await redis.ping();
-        if (reply === 'PONG') status.redis = 'ok';
+        if ((await redis.ping()) === 'PONG') status.redis = 'ok';
     } catch (error) {
         console.error('[health] redis:', error.message);
     }
 
     const healthy = status.postgres === 'ok' && status.redis === 'ok';
-    return Response.json(status, { status: healthy ? 200 : 503 });
-}
+    res.status(healthy ? 200 : 503).json(status);
+});
+
+export default router;
