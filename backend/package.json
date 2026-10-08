@@ -5,7 +5,12 @@
     "type": "module",
     "scripts": {
         "dev": "node --watch --env-file=.env src/server.js",
-        "start": "node src/server.js"
+        "start": "node src/server.js",
+        "postinstall": "prisma generate",
+        "db:generate": "prisma generate",
+        "db:migrate": "prisma migrate dev",
+        "db:seed": "node --env-file=.env prisma/seed.mjs",
+        "db:studio": "prisma studio"
     },
     "dependencies": {
         "@prisma/client": "^6.19.3",
