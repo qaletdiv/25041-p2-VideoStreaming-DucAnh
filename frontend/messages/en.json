@@ -47,5 +47,10 @@
             "accountLocked": "Your account has been locked",
             "networkError": "Cannot reach the server, please try again"
         }
+    },
+    "forbidden": {
+        "title": "403 - Forbidden",
+        "description": "You do not have permission to view this page.",
+        "backHome": "Back to home"
     }
 }

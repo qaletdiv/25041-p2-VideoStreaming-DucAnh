@@ -47,5 +47,10 @@
             "accountLocked": "Tài khoản của bạn đã bị khóa",
             "networkError": "Không thể kết nối tới máy chủ, vui lòng thử lại"
         }
+    },
+    "forbidden": {
+        "title": "403 - Không có quyền truy cập",
+        "description": "Bạn không có quyền xem trang này.",
+        "backHome": "Về trang chủ"
     }
 }
