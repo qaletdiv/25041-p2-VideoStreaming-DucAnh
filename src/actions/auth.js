@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/prisma';
-import { createSession } from '@/lib/session';
+import { createSession, deleteSession } from '@/lib/session';
 import { loginSchema, registerSchema } from '@/lib/validations/auth';
 
 // Mã băm giả: để thời gian phản hồi như nhau dù email có tồn tại hay không
@@ -58,4 +58,9 @@ export async function loginUser(values) {
     revalidatePath('/', 'layout');
 
     return { success: true };
+}
+
+export async function logoutUser() {
+    await deleteSession();
+    revalidatePath('/', 'layout');
 }
