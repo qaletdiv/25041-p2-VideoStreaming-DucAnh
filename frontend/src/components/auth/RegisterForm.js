@@ -7,7 +7,8 @@ import {
 } from '@mui/material';
 import { Link } from '@/i18n/navigation';
 import { registerSchema } from '@/lib/validations/auth';
-import { registerUser } from '@/actions/auth';
+import { apiFetch } from '@/lib/api';
+import { toFormErrors } from '@/lib/apiErrors';
 
 export default function RegisterForm() {
     const t = useTranslations('auth');
@@ -34,9 +35,13 @@ export default function RegisterForm() {
         setErrors({});
 
         startTransition(async () => {
-            const response = await registerUser(values);
-            if (response.errors) setErrors(response.errors);
-            else setSuccess(true);
+            const { ok, data } = await apiFetch('/auth/register', {
+                method: 'POST',
+                body: values,
+            });
+
+            if (ok) setSuccess(true);
+            else setErrors(toFormErrors(data));
         });
     };
 

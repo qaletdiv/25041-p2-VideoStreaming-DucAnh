@@ -7,7 +7,8 @@ import {
 } from '@mui/material';
 import { Link, useRouter } from '@/i18n/navigation';
 import { loginSchema } from '@/lib/validations/auth';
-import { loginUser } from '@/actions/auth';
+import { apiFetch } from '@/lib/api';
+import { toFormErrors } from '@/lib/apiErrors';
 
 export default function LoginForm() {
     const t = useTranslations('auth');
@@ -32,12 +33,18 @@ export default function LoginForm() {
         setErrors({});
 
         startTransition(async () => {
-            const response = await loginUser(values);
-            if (response.errors) {
-                setErrors(response.errors);
-            } else {
-                router.replace('/');
+            const { ok, data } = await apiFetch('/auth/login', {
+                method: 'POST',
+                body: values,
+            });
+
+            if (!ok) {
+                setErrors(toFormErrors(data));
+                return;
             }
+
+            router.replace('/');
+            router.refresh(); // buộc layout render lại để header thấy user mới
         });
     };
 

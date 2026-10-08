@@ -44,7 +44,8 @@
             "serverError": "Something went wrong, please try again",
             "passwordRequired": "Please enter your password",
             "invalidCredentials": "Incorrect email or password",
-            "accountLocked": "Your account has been locked"
+            "accountLocked": "Your account has been locked",
+            "networkError": "Cannot reach the server, please try again"
         }
     }
 }
