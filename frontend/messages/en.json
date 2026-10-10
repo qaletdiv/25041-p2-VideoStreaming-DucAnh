@@ -52,5 +52,22 @@
         "title": "403 - Forbidden",
         "description": "You do not have permission to view this page.",
         "backHome": "Back to home"
+    },
+    "home": {
+        "title": "Videos",
+        "searchPlaceholder": "Search videos…",
+        "categoryAll": "All categories",
+        "sortLabel": "Sort",
+        "sortNewest": "Newest",
+        "sortOldest": "Oldest",
+        "sortPopular": "Popular",
+        "views": "{count, plural, =1 {# view} other {# views}}",
+        "durationMinutes": "{count} min",
+        "durationSeconds": "{count} sec",
+        "vod": "VOD",
+        "noVideos": "No videos match your filters.",
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} / {total}"
     }
 }

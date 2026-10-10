@@ -3,6 +3,7 @@ import { useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { routing } from '@/i18n/routing';
+import { useSearchParams } from 'next/navigation';
 import { usePathname, useRouter } from '@/i18n/navigation';
 
 export default function LanguageSwitcher() {
@@ -10,6 +11,7 @@ export default function LanguageSwitcher() {
     const locale = useLocale();
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
     const [isPending, startTransition] = useTransition();
 
     const handleChange = (event, newLocale) => {
@@ -17,7 +19,9 @@ export default function LanguageSwitcher() {
         if (newLocale === null || newLocale === locale || isPending) return;
 
         startTransition(() => {
-            router.replace(pathname, { locale: newLocale });
+            // Giữ query string khi đổi ngôn ngữ (trạng thái lọc/trang đang nằm trên URL)
+            const query = searchParams.toString();
+            router.replace(query ? `${pathname}?${query}` : pathname, { locale: newLocale });
         });
     };
 
