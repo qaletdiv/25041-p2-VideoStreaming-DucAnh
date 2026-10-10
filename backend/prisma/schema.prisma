@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  avatarUrl    String?
+  role         Role     @default(USER)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  videos       Video[]
+}
+
+model Category {
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
+  videos Video[]
+}
+
+enum VideoStatus {
+  PROCESSING
+  READY
+  FAILED
+}
+
+model Video {
+  id           String      @id @default(cuid())
+  title        String
+  description  String?
+  publicId     String?     @unique
+  videoUrl     String
+  thumbnailUrl String?
+  duration     Int         @default(0)
+  status       VideoStatus @default(READY)
+  viewCount    Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // Quan hệ: mỗi video thuộc 1 uploader và (tuỳ chọn) 1 danh mục
+  uploader   User      @relation(fields: [uploaderId], references: [id], onDelete: Cascade)
+  uploaderId String
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId String?
+
+  // Chỉ mục cho các truy vấn thường dùng; KHÔNG đánh chỉ mục status (ít giá trị khác nhau)
+  @@index([uploaderId])
+  @@index([categoryId])
+  @@index([createdAt])
+  @@index([viewCount])
+}
