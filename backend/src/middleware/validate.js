@@ -1,9 +1,9 @@
 import { z } from 'zod';
 import { HttpError } from '../lib/httpError.js';
 
-export function validate(schema) {
+export function validate(schema, source = 'body') {
     return (req, res, next) => {
-        const result = schema.safeParse(req.body);
+        const result = schema.safeParse(req[source]);
 
         if (!result.success) {
             throw new HttpError(
@@ -14,7 +14,12 @@ export function validate(schema) {
             );
         }
 
-        req.body = result.data; // dữ liệu đã chuẩn hóa, trường lạ đã bị loại
+        // Express 5: req.query chỉ có getter, không gán được -> lưu vào property riêng
+        if (source === 'query') {
+            req.validatedQuery = result.data;
+        } else {
+            req[source] = result.data; // req.body ghi được bình thường
+        }
         next();
     };
 }
