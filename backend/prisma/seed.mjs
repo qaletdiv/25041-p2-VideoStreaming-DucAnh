@@ -35,7 +35,35 @@ async function main() {
         });
     }
 
-    console.log(`Seed xong: ${categories.length} category, ${users.length} user`);
+    // 30 video mẫu: dữ liệu tính theo công thức từ i (không ngẫu nhiên) để chạy lại luôn giống nhau
+    const sampleVideoUrl = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+    const uploaderEmails = ['user1@streamhub.local', 'user2@streamhub.local'];
+    const categorySlugs = ['game', 'giai-tri', 'cong-nghe', 'am-nhac', 'giao-duc'];
+    const baseDate = new Date('2026-10-01T00:00:00Z');
+
+    for (let i = 1; i <= 30; i++) {
+        const id = `seed-video-${String(i).padStart(2, '0')}`;
+        const createdAt = new Date(baseDate.getTime() + i * 18 * 60 * 60 * 1000);
+
+        await prisma.video.upsert({
+            where: { id },
+            update: {},
+            create: {
+                id,
+                title: `Video mẫu ${String(i).padStart(2, '0')}`,
+                videoUrl: sampleVideoUrl,
+                thumbnailUrl: null,
+                duration: 60 + ((i * 37) % 600),
+                status: 'READY',
+                viewCount: (i * 7919) % 5000,
+                createdAt,
+                uploader: { connect: { email: uploaderEmails[i % 2] } },
+                category: { connect: { slug: categorySlugs[i % 5] } },
+            },
+        });
+    }
+
+    console.log(`Seed xong: ${categories.length} category, ${users.length} user, 30 video`);
 }
 
 main()
