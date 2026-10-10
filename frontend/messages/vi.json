@@ -52,5 +52,22 @@
         "title": "403 - Không có quyền truy cập",
         "description": "Bạn không có quyền xem trang này.",
         "backHome": "Về trang chủ"
+    },
+    "home": {
+        "title": "Video",
+        "searchPlaceholder": "Tìm kiếm video…",
+        "categoryAll": "Tất cả danh mục",
+        "sortLabel": "Sắp xếp",
+        "sortNewest": "Mới nhất",
+        "sortOldest": "Cũ nhất",
+        "sortPopular": "Nổi bật",
+        "views": "{count} lượt xem",
+        "durationMinutes": "{count} phút",
+        "durationSeconds": "{count} giây",
+        "vod": "VOD",
+        "noVideos": "Không có video nào khớp với bộ lọc.",
+        "previous": "Trước",
+        "next": "Sau",
+        "pageInfo": "Trang {current} / {total}"
     }
 }
