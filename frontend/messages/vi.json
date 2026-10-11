@@ -69,5 +69,49 @@
         "previous": "Trước",
         "next": "Sau",
         "pageInfo": "Trang {current} / {total}"
+    },
+    "upload": {
+        "title": "Upload Video",
+        "dragDrop": "Kéo thả hoặc nhấn để chọn video",
+        "maxSize": "Tối đa {size}",
+        "videoTitle": "Tiêu đề",
+        "description": "Mô tả",
+        "category": "Danh mục",
+        "categoryNone": "Không chọn",
+        "submit": "Upload Video",
+        "uploading": "Đang tải lên…",
+        "registering": "Đang xử lý…",
+        "success": "Upload thành công! Đang chuyển về Dashboard…",
+        "errors": {
+            "fileRequired": "Vui lòng chọn file video",
+            "fileTooLarge": "File vượt quá dung lượng cho phép",
+            "fileInvalidType": "Định dạng file không được hỗ trợ",
+            "titleRequired": "Vui lòng nhập tiêu đề",
+            "titleMax": "Tiêu đề tối đa 200 ký tự",
+            "descriptionMax": "Mô tả tối đa 2000 ký tự",
+            "signatureFailed": "Không thể xin chữ ký upload, vui lòng thử lại",
+            "serverError": "Có lỗi xảy ra, vui lòng thử lại"
+        }
+    },
+    "dashboard": {
+        "title": "Video của tôi",
+        "uploadVideo": "Upload Video",
+        "noVideos": "Bạn chưa upload video nào.",
+        "views": "{count} lượt xem",
+        "delete": "Xóa",
+        "previous": "Trước",
+        "next": "Sau",
+        "pageInfo": "Trang {current} / {total}",
+        "status": {
+            "PROCESSING": "Đang xử lý",
+            "READY": "Sẵn sàng",
+            "FAILED": "Thất bại"
+        },
+        "deleteDialog": {
+            "title": "Xóa video?",
+            "message": "Video sẽ bị xóa vĩnh viễn khỏi hệ thống và Cloudinary. Hành động này không thể hoàn tác.",
+            "cancel": "Hủy",
+            "confirm": "Xóa"
+        }
     }
 }
