@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import { listVideosSchema } from '../validations/video.js';
+import { authenticate } from '../middleware/authenticate.js';
+import { listVideosSchema, createVideoSchema, listMyVideosSchema } from '../validations/video.js';
 import * as videoController from '../controllers/video.controller.js';
 
 const router = Router();
 
 // Công khai (khách cũng xem được trang chủ); tham số nằm ở query string
 router.get('/', validate(listVideosSchema, 'query'), videoController.listVideos);
+
+// Cần đăng nhập
+router.get('/mine', authenticate, validate(listMyVideosSchema, 'query'), videoController.listMyVideos);
+router.post('/', authenticate, validate(createVideoSchema), videoController.createVideo);
+router.delete('/:id', authenticate, videoController.deleteVideo);
 
 export default router;
