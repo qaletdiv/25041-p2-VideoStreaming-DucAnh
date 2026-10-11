@@ -69,5 +69,49 @@
         "previous": "Previous",
         "next": "Next",
         "pageInfo": "Page {current} / {total}"
+    },
+    "upload": {
+        "title": "Upload Video",
+        "dragDrop": "Drag & drop or click to select a video",
+        "maxSize": "Maximum {size}",
+        "videoTitle": "Title",
+        "description": "Description",
+        "category": "Category",
+        "categoryNone": "None",
+        "submit": "Upload Video",
+        "uploading": "Uploading…",
+        "registering": "Processing…",
+        "success": "Upload successful! Redirecting to Dashboard…",
+        "errors": {
+            "fileRequired": "Please select a video file",
+            "fileTooLarge": "File exceeds the maximum size",
+            "fileInvalidType": "Unsupported file format",
+            "titleRequired": "Please enter a title",
+            "titleMax": "Title must be at most 200 characters",
+            "descriptionMax": "Description must be at most 2000 characters",
+            "signatureFailed": "Failed to get upload signature, please try again",
+            "serverError": "Something went wrong, please try again"
+        }
+    },
+    "dashboard": {
+        "title": "My Videos",
+        "uploadVideo": "Upload Video",
+        "noVideos": "You haven't uploaded any videos yet.",
+        "views": "{count, plural, =1 {# view} other {# views}}",
+        "delete": "Delete",
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} / {total}",
+        "status": {
+            "PROCESSING": "Processing",
+            "READY": "Ready",
+            "FAILED": "Failed"
+        },
+        "deleteDialog": {
+            "title": "Delete video?",
+            "message": "This video will be permanently deleted from the system and Cloudinary. This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete"
+        }
     }
 }
