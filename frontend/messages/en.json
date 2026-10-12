@@ -113,5 +113,14 @@
             "cancel": "Cancel",
             "confirm": "Delete"
         }
+    },
+    "watch": {
+        "notFound": "Video not found.",
+        "backHome": "Back to home",
+        "views": "{count, plural, =1 {# view} other {# views}}",
+        "durationMinutes": "{count} min",
+        "durationSeconds": "{count} sec",
+        "uploadedBy": "Uploaded by",
+        "description": "Description"
     }
 }
