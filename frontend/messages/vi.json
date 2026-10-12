@@ -114,6 +114,24 @@
             "confirm": "Xóa"
         }
     },
+    "streamCreate": {
+        "title": "Tạo phòng Stream",
+        "streamTitle": "Tên phòng",
+        "video": "Video",
+        "chooseVideo": "Chọn video",
+        "requireAuth": "Yêu cầu đăng nhập để xem phòng",
+        "submit": "Tạo phòng",
+        "creating": "Đang tạo…",
+        "created": "Đã tạo phòng. Mã phòng: {id}",
+        "noReadyVideos": "Bạn chưa có video sẵn sàng để phát.",
+        "errors": {
+            "titleRequired": "Vui lòng nhập tên phòng",
+            "titleMax": "Tên phòng tối đa 200 ký tự",
+            "videoRequired": "Vui lòng chọn video",
+            "videoUnavailable": "Video này chưa sẵn sàng hoặc bạn không có quyền sử dụng.",
+            "serverError": "Không thể tạo phòng, vui lòng thử lại."
+        }
+    },
     "watch": {
         "notFound": "Không tìm thấy video.",
         "backHome": "Về trang chủ",

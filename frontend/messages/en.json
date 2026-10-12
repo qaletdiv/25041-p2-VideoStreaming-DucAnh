@@ -114,6 +114,24 @@
             "confirm": "Delete"
         }
     },
+    "streamCreate": {
+        "title": "Create a Stream room",
+        "streamTitle": "Room name",
+        "video": "Video",
+        "chooseVideo": "Choose a video",
+        "requireAuth": "Require sign-in to watch",
+        "submit": "Create room",
+        "creating": "Creating…",
+        "created": "Room created. Room ID: {id}",
+        "noReadyVideos": "You have no videos ready to stream.",
+        "errors": {
+            "titleRequired": "Enter a room name",
+            "titleMax": "Room name must be at most 200 characters",
+            "videoRequired": "Choose a video",
+            "videoUnavailable": "This video is unavailable or you cannot use it.",
+            "serverError": "Could not create the room. Please try again."
+        }
+    },
     "watch": {
         "notFound": "Video not found.",
         "backHome": "Back to home",

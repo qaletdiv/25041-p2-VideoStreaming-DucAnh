@@ -26,7 +26,7 @@ export default function VideoCard({ video }) {
                 )}
                 <CardContent>
                     <Typography variant="subtitle2" sx={{ fontWeight: 700 }} noWrap>{video.title}</Typography>
-                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
+                    <Stack direction="row" spacing={1} sx={{ mt: 0.5, alignItems: 'center' }}>
                         <Chip size="small" label={t('vod')} variant="outlined" sx={{ height: 20, fontSize: '0.7rem' }} />
                         <Typography variant="body2" color="text.secondary">{formatDuration(t, video.duration)}</Typography>
                     </Stack>

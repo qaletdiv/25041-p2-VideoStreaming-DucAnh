@@ -35,7 +35,7 @@ export default async function WatchPage({ params }) {
             <Card sx={{ mt: 2 }}>
                 <CardContent>
                     <Typography variant="h5" sx={{ fontWeight: 700 }}>{video.title}</Typography>
-                    <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 1 }}>
+                    <Stack direction="row" spacing={1} sx={{ mt: 1, alignItems: 'center' }}>
                         <Chip size="small" label={t('views', { count: video.viewCount })} variant="outlined" sx={{ height: 20, fontSize: '0.7rem' }} />
                         <Typography variant="body2" color="text.secondary">
                             {formatDuration(t, video.duration)} · {date}
