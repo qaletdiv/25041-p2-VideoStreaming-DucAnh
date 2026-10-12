@@ -5,6 +5,7 @@ import app from './app.js';
 import { prisma } from './lib/prisma.js';
 import { redis } from './lib/redis.js';
 import { finalizeProcessingVideos } from './services/video.service.js';
+import { registerStreamSockets } from './socket/streams.js';
 
 const server = createServer(app);
 const io = new Server(server, {
@@ -12,7 +13,12 @@ const io = new Server(server, {
         origin: env.clientOrigins,
         credentials: true,
     },
+    allowRequest: (req, callback) => {
+        const origin = req.headers.origin;
+        callback(null, !origin || env.clientOrigins.includes(origin));
+    },
 });
+registerStreamSockets(io);
 
 // Định kỳ chuyển video PROCESSING -> READY/FAILED (unref để không giữ process)
 const sweeper = setInterval(() => {
