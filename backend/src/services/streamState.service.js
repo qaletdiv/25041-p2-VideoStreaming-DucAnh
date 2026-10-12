@@ -84,3 +84,42 @@ export async function transitionStreamState(streamId, action, durationMs, seekMs
 
     return { ...JSON.parse(result), serverNow: now };
 }
+
+const VIEWER_WINDOW_MS = 30_000;
+const VIEWER_KEY_TTL_SECONDS = 60;
+const viewersKey = (streamId) => `stream:${streamId}:viewers`;
+
+// viewerId là định danh kết nối do server cấp, không nhận ID tuỳ ý từ client
+export async function heartbeatViewer(streamId, viewerId) {
+    const now = Date.now();
+    const key = viewersKey(streamId);
+
+    const results = await redis.multi()
+        .zadd(key, now, viewerId)
+        .zremrangebyscore(key, '-inf', now - VIEWER_WINDOW_MS)
+        .zcount(key, now - VIEWER_WINDOW_MS + 1, '+inf')
+        .expire(key, VIEWER_KEY_TTL_SECONDS)
+        .exec();
+
+    if (results.some(([error]) => error)) {
+        throw results.find(([error]) => error)[0];
+    }
+
+    return { viewers: results[2][1], serverNow: now };
+}
+
+export async function countViewers(streamId) {
+    const now = Date.now();
+    const key = viewersKey(streamId);
+
+    const results = await redis.multi()
+        .zremrangebyscore(key, '-inf', now - VIEWER_WINDOW_MS)
+        .zcount(key, now - VIEWER_WINDOW_MS + 1, '+inf')
+        .exec();
+
+    if (results.some(([error]) => error)) {
+        throw results.find(([error]) => error)[0];
+    }
+
+    return { viewers: results[1][1], serverNow: now };
+}
