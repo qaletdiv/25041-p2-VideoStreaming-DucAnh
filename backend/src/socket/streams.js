@@ -54,7 +54,10 @@ export function registerStreamSockets(io) {
                     where: { id: streamId },
                     select: { status: true, requireAuth: true, video: { select: { status: true } } },
                 });
-                if (!stream || stream.status === 'ENDED' || stream.video.status !== 'READY') {
+                if (stream?.status === 'ENDED') {
+                    return ack({ ok: false, code: 'STREAM_ENDED' });
+                }
+                if (!stream || stream.video.status !== 'READY') {
                     return ack({ ok: false, code: 'STREAM_NOT_FOUND' });
                 }
                 if (stream.requireAuth && !socket.data.user) {

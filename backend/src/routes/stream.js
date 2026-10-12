@@ -7,6 +7,7 @@ import * as streamController from '../controllers/stream.controller.js';
 const router = Router();
 
 router.post('/', authenticate, validate(createStreamSchema), streamController.createStream);
+router.get('/', streamController.listStreams);
 router.get('/:id', optionalAuthenticate, validate(streamIdSchema, 'params'), streamController.getStream);
 router.post(
     '/:id/actions',
