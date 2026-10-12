@@ -123,6 +123,7 @@
         "submit": "Tạo phòng",
         "creating": "Đang tạo…",
         "created": "Đã tạo phòng. Mã phòng: {id}",
+        "openRoom": "Mở phòng",
         "noReadyVideos": "Bạn chưa có video sẵn sàng để phát.",
         "errors": {
             "titleRequired": "Vui lòng nhập tên phòng",
@@ -130,6 +131,42 @@
             "videoRequired": "Vui lòng chọn video",
             "videoUnavailable": "Video này chưa sẵn sàng hoặc bạn không có quyền sử dụng.",
             "serverError": "Không thể tạo phòng, vui lòng thử lại."
+        }
+    },
+    "streamRoom": {
+        "notFound": "Không tìm thấy phòng Stream.",
+        "backHome": "Về trang chủ",
+        "owner": "Chủ phòng: {name}",
+        "viewers": "{count} người xem",
+        "mute": "Tắt tiếng",
+        "unmute": "Bật tiếng",
+        "tapToPlay": "Nhấn để phát",
+        "seek": "Vị trí phát",
+        "play": "Phát",
+        "pause": "Tạm dừng",
+        "end": "Kết thúc",
+        "chat": "Trò chuyện trực tiếp",
+        "message": "Tin nhắn",
+        "send": "Gửi",
+        "signInToChat": "Đăng nhập để gửi tin nhắn",
+        "status": {
+            "CREATED": "Chưa phát",
+            "PLAYING": "Đang phát",
+            "PAUSED": "Tạm dừng",
+            "ENDED": "Đã kết thúc"
+        },
+        "errors": {
+            "CONNECTION_ERROR": "Không thể kết nối phòng. Vui lòng thử tải lại trang.",
+            "VALIDATION_ERROR": "Dữ liệu không hợp lệ.",
+            "STREAM_NOT_FOUND": "Phòng không tồn tại hoặc đã kết thúc.",
+            "UNAUTHENTICATED": "Vui lòng đăng nhập để thực hiện thao tác này.",
+            "STATE_UNAVAILABLE": "Trạng thái phòng tạm thời không khả dụng.",
+            "NOT_IN_STREAM": "Bạn chưa vào phòng.",
+            "INTERNAL_ERROR": "Có lỗi xảy ra. Vui lòng thử lại.",
+            "CHAT_RATE_LIMIT": "Vui lòng chờ trước khi gửi tin nhắn tiếp.",
+            "INVALID_STREAM_ACTION": "Thao tác phát không hợp lệ.",
+            "STREAM_BUSY": "Phòng đang xử lý một thao tác khác.",
+            "FORBIDDEN": "Bạn không có quyền điều khiển phòng."
         }
     },
     "watch": {

@@ -123,6 +123,7 @@
         "submit": "Create room",
         "creating": "Creating…",
         "created": "Room created. Room ID: {id}",
+        "openRoom": "Open room",
         "noReadyVideos": "You have no videos ready to stream.",
         "errors": {
             "titleRequired": "Enter a room name",
@@ -130,6 +131,42 @@
             "videoRequired": "Choose a video",
             "videoUnavailable": "This video is unavailable or you cannot use it.",
             "serverError": "Could not create the room. Please try again."
+        }
+    },
+    "streamRoom": {
+        "notFound": "Stream room not found.",
+        "backHome": "Back to home",
+        "owner": "Host: {name}",
+        "viewers": "{count, plural, =1 {# viewer} other {# viewers}}",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "tapToPlay": "Tap to play",
+        "seek": "Playback position",
+        "play": "Play",
+        "pause": "Pause",
+        "end": "End",
+        "chat": "Live chat",
+        "message": "Message",
+        "send": "Send",
+        "signInToChat": "Sign in to send a message",
+        "status": {
+            "CREATED": "Not started",
+            "PLAYING": "Playing",
+            "PAUSED": "Paused",
+            "ENDED": "Ended"
+        },
+        "errors": {
+            "CONNECTION_ERROR": "Could not connect to the room. Please reload the page.",
+            "VALIDATION_ERROR": "Invalid data.",
+            "STREAM_NOT_FOUND": "This room does not exist or has ended.",
+            "UNAUTHENTICATED": "Sign in to perform this action.",
+            "STATE_UNAVAILABLE": "Room state is temporarily unavailable.",
+            "NOT_IN_STREAM": "You have not joined the room.",
+            "INTERNAL_ERROR": "Something went wrong. Please try again.",
+            "CHAT_RATE_LIMIT": "Please wait before sending another message.",
+            "INVALID_STREAM_ACTION": "Invalid playback action.",
+            "STREAM_BUSY": "The room is processing another action.",
+            "FORBIDDEN": "You cannot control this room."
         }
     },
     "watch": {

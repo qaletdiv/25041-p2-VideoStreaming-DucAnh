@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { z } from 'zod';
 import { apiFetch } from '@/lib/api';
+import { Link } from '@/i18n/navigation';
 import { createStreamSchema } from '@/lib/validations/stream';
 
 export default function CreateStreamForm({ videos }) {
@@ -61,7 +62,8 @@ export default function CreateStreamForm({ videos }) {
                         {generalError && <Alert severity="error">{t(`errors.${generalError}`)}</Alert>}
                         {createdId && (
                             <Alert severity="success">
-                                {t('created', { id: createdId })}
+                                {t('created', { id: createdId })}{' '}
+                                <Link href={`/stream/${createdId}`}>{t('openRoom')}</Link>
                             </Alert>
                         )}
                         <TextField
