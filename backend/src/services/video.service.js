@@ -174,3 +174,36 @@ export async function finalizeProcessingVideos() {
         }
     }
 }
+
+// Chi tiết video công khai (chỉ READY; video chưa sẵn sàng coi như không tồn tại)
+export async function getPublicVideo(id) {
+    const video = await prisma.video.findFirst({
+        where: { id, status: 'READY' },
+        select: {
+            id: true,
+            title: true,
+            description: true,
+            videoUrl: true,
+            thumbnailUrl: true,
+            duration: true,
+            viewCount: true,
+            createdAt: true,
+            uploader: { select: { id: true, name: true } },
+            category: { select: { id: true, name: true, slug: true } },
+        },
+    });
+    if (!video) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
+    return video;
+}
+
+// Tăng lượt xem nguyên tử: 1 UPDATE duy nhất, không đọc-modify-ghi
+export async function incrementViews(videoId) {
+    const result = await prisma.video.updateMany({
+        where: { id: videoId, status: 'READY' },
+        data: { viewCount: { increment: 1 } },
+    });
+    if (result.count === 0) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
+
+    const video = await prisma.video.findUnique({ where: { id: videoId }, select: { viewCount: true } });
+    return video;
+}

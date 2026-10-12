@@ -19,3 +19,13 @@ export async function deleteVideo(req, res) {
     await videoService.deleteVideo(req.user.id, req.user.role, req.params.id);
     res.status(204).end();
 }
+
+export async function getVideo(req, res) {
+    const video = await videoService.getPublicVideo(req.params.id);
+    res.json({ video });
+}
+
+export async function incrementViews(req, res) {
+    const { viewCount } = await videoService.incrementViews(req.params.id);
+    res.json({ viewCount });
+}

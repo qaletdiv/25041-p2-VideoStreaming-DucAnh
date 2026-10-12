@@ -113,5 +113,14 @@
             "cancel": "Hủy",
             "confirm": "Xóa"
         }
+    },
+    "watch": {
+        "notFound": "Không tìm thấy video.",
+        "backHome": "Về trang chủ",
+        "views": "{count} lượt xem",
+        "durationMinutes": "{count} phút",
+        "durationSeconds": "{count} giây",
+        "uploadedBy": "Đăng bởi",
+        "description": "Mô tả"
     }
 }
