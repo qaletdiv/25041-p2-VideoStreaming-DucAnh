@@ -5,6 +5,7 @@ import app from './app.js';
 import { prisma } from './lib/prisma.js';
 import { redis } from './lib/redis.js';
 import { finalizeProcessingVideos } from './services/video.service.js';
+import { samplePlayingStreams } from './services/streamSample.service.js';
 import { registerStreamSockets } from './socket/streams.js';
 
 const server = createServer(app);
@@ -27,6 +28,11 @@ const sweeper = setInterval(() => {
 }, 60_000);
 sweeper.unref();
 
+const streamSampler = setInterval(() => {
+    samplePlayingStreams().catch((error) => console.error('[samples]', error));
+}, 10_000);
+streamSampler.unref();
+
 server.listen(env.port, () => {
     console.log(`Backend đang chạy tại http://localhost:${env.port}`);
 });
@@ -34,6 +40,7 @@ server.listen(env.port, () => {
 async function shutdown(signal) {
     console.log(`Nhận ${signal}, đang tắt server...`);
     clearInterval(sweeper);
+    clearInterval(streamSampler);
     io.close(async () => {
         await prisma.$disconnect();
         redis.disconnect();
