@@ -78,7 +78,7 @@ export default function MyVideoList() {
     return (
         <Box>
             {/* Header: tiêu đề + nút upload */}
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+            <Stack direction="row" sx={{ mb: 3, justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
                     {t('title')}
                 </Typography>
@@ -134,7 +134,7 @@ export default function MyVideoList() {
                                         <Typography variant="subtitle2" sx={{ fontWeight: 700 }} noWrap>
                                             {video.title}
                                         </Typography>
-                                        <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 0.5 }}>
+                                        <Stack direction="row" spacing={1} sx={{ mt: 0.5, alignItems: 'center' }}>
                                             <Chip
                                                 size="small"
                                                 color={status.color}

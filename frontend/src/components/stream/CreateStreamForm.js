@@ -69,7 +69,7 @@ export default function CreateStreamForm({ videos }) {
                             label={t('streamTitle')}
                             error={Boolean(errors.title)}
                             helperText={fieldError('title')}
-                            inputProps={{ maxLength: 200 }}
+                            slotProps={{ htmlInput: { maxLength: 200 } }}
                             required
                         />
                         <TextField
