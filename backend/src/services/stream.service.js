@@ -1,6 +1,12 @@
 import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/httpError.js';
-import { getStreamState, initializeStreamState } from './streamState.service.js';
+import {
+    getStreamState,
+    initializeStreamState,
+    restoreStreamState,
+    transitionStreamState,
+    withStreamControlLock,
+} from './streamState.service.js';
 
 export async function createStream(user, { title, videoId, requireAuth }) {
     const video = await prisma.video.findUnique({
@@ -63,4 +69,63 @@ export async function getStream(id, user) {
 
     const state = await getStreamState(id);
     return { stream, state };
+}
+
+export async function controlStream(id, user, { action, positionMs = 0 }) {
+    const result = await withStreamControlLock(id, async () => {
+        const stream = await prisma.stream.findUnique({
+            where: { id },
+            select: {
+                ownerId: true,
+                startedAt: true,
+                video: { select: { duration: true, status: true } },
+            },
+        });
+        if (!stream || stream.video.status !== 'READY') {
+            throw new HttpError(404, 'STREAM_NOT_FOUND', 'Stream not found');
+        }
+        if (stream.ownerId !== user.id && user.role !== 'ADMIN') {
+            throw new HttpError(403, 'FORBIDDEN', 'You do not control this stream');
+        }
+
+        const previous = await getStreamState(id);
+        if (!previous) {
+            throw new HttpError(503, 'STATE_UNAVAILABLE', 'Stream state is unavailable');
+        }
+
+        let state;
+        try {
+            state = await transitionStreamState(
+                id, action, stream.video.duration * 1000, positionMs,
+            );
+        } catch (error) {
+            if (error instanceof RangeError) {
+                throw new HttpError(409, 'INVALID_STREAM_ACTION', 'Invalid stream action');
+            }
+            throw error;
+        }
+
+        const changedAt = new Date(state.serverNow);
+        try {
+            await prisma.stream.update({
+                where: { id },
+                data: {
+                    status: state.status,
+                    positionMs: state.positionMs,
+                    stateChangedAt: changedAt,
+                    ...(action === 'PLAY' && !stream.startedAt ? { startedAt: changedAt } : {}),
+                    ...(action === 'END' ? { endedAt: changedAt } : {}),
+                },
+            });
+        } catch (error) {
+            const { serverNow, ...snapshot } = previous;
+            await restoreStreamState(id, snapshot);
+            throw error;
+        }
+
+        return state;
+    });
+
+    if (!result) throw new HttpError(409, 'STREAM_BUSY', 'Stream control is busy');
+    return result;
 }

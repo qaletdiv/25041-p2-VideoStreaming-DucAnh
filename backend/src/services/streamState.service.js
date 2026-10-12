@@ -1,6 +1,36 @@
 import { redis } from '../lib/redis.js';
+import { randomUUID } from 'node:crypto';
 
 const stateKey = (streamId) => `stream:${streamId}:state`;
+const controlLockKey = (streamId) => `stream:${streamId}:control-lock`;
+
+const RELEASE_LOCK_SCRIPT = `
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+    return redis.call('DEL', KEYS[1])
+end
+return 0
+`;
+
+export async function withStreamControlLock(streamId, callback) {
+    const key = controlLockKey(streamId);
+    const token = randomUUID();
+    const acquired = await redis.set(key, token, 'PX', 30_000, 'NX');
+    if (acquired !== 'OK') return null;
+
+    try {
+        return await callback();
+    } finally {
+        try {
+            await redis.eval(RELEASE_LOCK_SCRIPT, 1, key, token);
+        } catch (error) {
+            console.error('[redis] release stream control lock:', error);
+        }
+    }
+}
+
+export async function restoreStreamState(streamId, state) {
+    await redis.set(stateKey(streamId), JSON.stringify(state));
+}
 
 // Chỉ khởi tạo một lần; gọi lại không ghi đè trạng thái đang phát
 export async function initializeStreamState(streamId) {

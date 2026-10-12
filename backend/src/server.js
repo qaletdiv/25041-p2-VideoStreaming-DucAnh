@@ -18,6 +18,7 @@ const io = new Server(server, {
         callback(null, !origin || env.clientOrigins.includes(origin));
     },
 });
+app.set('io', io);
 registerStreamSockets(io);
 
 // Định kỳ chuyển video PROCESSING -> READY/FAILED (unref để không giữ process)
