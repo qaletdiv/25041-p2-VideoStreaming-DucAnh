@@ -16,6 +16,14 @@ export async function authenticate(req, res, next) {
     next();
 }
 
+// Route công khai vẫn nhận diện người dùng nếu có cookie hợp lệ
+export async function optionalAuthenticate(req, res, next) {
+    const token = req.cookies[SESSION_COOKIE];
+    const payload = token ? await verifyToken(token) : null;
+    req.user = payload?.sub ? await findActiveUserById(payload.sub) : null;
+    next();
+}
+
 export function requireRole(...roles) {
     return (req, res, next) => {
         if (!req.user) {
