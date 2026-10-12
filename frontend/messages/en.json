@@ -55,6 +55,14 @@
     },
     "home": {
         "title": "Videos",
+        "streams": "Stream rooms",
+        "noStreams": "No stream rooms yet.",
+        "loginRequired": "Sign in to watch",
+        "streamStatus": {
+            "CREATED": "Not started",
+            "PLAYING": "Playing",
+            "PAUSED": "Paused"
+        },
         "searchPlaceholder": "Search videos…",
         "categoryAll": "All categories",
         "sortLabel": "Sort",
@@ -135,6 +143,8 @@
     },
     "streamRoom": {
         "notFound": "Stream room not found.",
+        "loginRequired": "Please sign in to watch this stream",
+        "login": "Sign in",
         "backHome": "Back to home",
         "owner": "Host: {name}",
         "viewers": "{count, plural, =1 {# viewer} other {# viewers}}",

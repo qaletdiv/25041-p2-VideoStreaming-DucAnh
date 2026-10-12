@@ -34,6 +34,22 @@ export async function createStream(user, { title, videoId, requireAuth }) {
     return stream;
 }
 
+export async function listStreams() {
+    return prisma.stream.findMany({
+        where: { status: { not: 'ENDED' }, video: { status: 'READY' } },
+        orderBy: { createdAt: 'desc' },
+        take: 24,
+        select: {
+            id: true,
+            title: true,
+            status: true,
+            requireAuth: true,
+            owner: { select: { name: true } },
+            video: { select: { thumbnailUrl: true } },
+        },
+    });
+}
+
 export async function getStream(id, user) {
     const stream = await prisma.stream.findUnique({
         where: { id },

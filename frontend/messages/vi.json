@@ -55,6 +55,14 @@
     },
     "home": {
         "title": "Video",
+        "streams": "Phòng stream",
+        "noStreams": "Chưa có phòng stream nào.",
+        "loginRequired": "Cần đăng nhập để xem",
+        "streamStatus": {
+            "CREATED": "Chưa phát",
+            "PLAYING": "Đang phát",
+            "PAUSED": "Tạm dừng"
+        },
         "searchPlaceholder": "Tìm kiếm video…",
         "categoryAll": "Tất cả danh mục",
         "sortLabel": "Sắp xếp",
@@ -135,6 +143,8 @@
     },
     "streamRoom": {
         "notFound": "Không tìm thấy phòng Stream.",
+        "loginRequired": "Vui lòng đăng nhập để xem stream này",
+        "login": "Đăng nhập",
         "backHome": "Về trang chủ",
         "owner": "Chủ phòng: {name}",
         "viewers": "{count} người xem",

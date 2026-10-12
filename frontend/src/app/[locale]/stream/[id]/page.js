@@ -1,16 +1,17 @@
 import { Box, Typography } from '@mui/material';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
 import { serverApiGet } from '@/lib/api.server';
 import { getCurrentUser } from '@/lib/session';
-import { requireUser } from '@/lib/guards';
+import { redirect } from '@/i18n/navigation';
 import LinkButton from '@/components/LinkButton';
+import StreamLoginPrompt from '@/components/stream/StreamLoginPrompt';
 import StreamRoom from '@/components/stream/StreamRoom';
 
 export default async function StreamPage({ params }) {
     const { id } = await params;
     const result = await serverApiGet(`/streams/${encodeURIComponent(id)}`);
 
-    if (result.status === 401) await requireUser();
+    if (result.status === 401) return <StreamLoginPrompt />;
 
     if (!result.ok || !result.data?.stream) {
         const t = await getTranslations('streamRoom');
@@ -23,5 +24,8 @@ export default async function StreamPage({ params }) {
     }
 
     const user = await getCurrentUser();
+    if (result.data.state?.status === 'ENDED' || result.data.stream.status === 'ENDED') {
+        redirect({ href: user?.id === result.data.stream.owner.id ? '/dashboard' : '/', locale: await getLocale() });
+    }
     return <StreamRoom stream={result.data.stream} initialState={result.data.state} user={user} />;
 }

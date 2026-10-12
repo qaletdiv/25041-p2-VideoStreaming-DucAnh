@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import Hls from 'hls.js';
 import { io } from 'socket.io-client';
@@ -7,7 +7,7 @@ import {
     Alert, Box, Button, Card, CardContent, Chip, Divider, Slider,
     Stack, TextField, Typography,
 } from '@mui/material';
-import { Link } from '@/i18n/navigation';
+import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 
 const socketUrl = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
@@ -15,6 +15,7 @@ const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : 
 
 export default function StreamRoom({ stream, initialState, user }) {
     const t = useTranslations('streamRoom');
+    const router = useRouter();
     const videoRef = useRef(null);
     const socketRef = useRef(null);
     const [state, setState] = useState(() => receivedState(initialState));
@@ -27,6 +28,14 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
     const isOwner = user?.id === stream.owner.id || user?.role === 'ADMIN';
+    const isCreator = user?.id === stream.owner.id;
+    const leaveEndedStream = useCallback(() => {
+        router.replace(isCreator ? '/dashboard' : '/');
+    }, [isCreator, router]);
+
+    useEffect(() => {
+        if (state?.status === 'ENDED') leaveEndedStream();
+    }, [state?.status, leaveEndedStream]);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -51,6 +60,10 @@ export default function StreamRoom({ stream, initialState, user }) {
 
         socket.on('connect', () => {
             socket.emit('stream:join', { streamId: stream.id }, (reply) => {
+                if (reply?.code === 'STREAM_ENDED') {
+                    leaveEndedStream();
+                    return;
+                }
                 if (!reply?.ok) {
                     setError(reply?.code ?? 'CONNECTION_ERROR');
                     return;
@@ -63,6 +76,9 @@ export default function StreamRoom({ stream, initialState, user }) {
         });
         socket.on('connect_error', () => setError('CONNECTION_ERROR'));
         socket.on('stream:state', (next) => setState(receivedState(next)));
+        socket.on('stream:ended', ({ streamId }) => {
+            if (streamId === stream.id) leaveEndedStream();
+        });
         socket.on('stream:chat', (message) => {
             setMessages((previous) => [...previous, message].slice(-100));
         });
@@ -79,7 +95,18 @@ export default function StreamRoom({ stream, initialState, user }) {
             socket.disconnect();
             socketRef.current = null;
         };
-    }, [stream.id]);
+    }, [stream.id, leaveEndedStream]);
+
+    useEffect(() => {
+        // Khi Socket.io gián đoạn, vẫn phát hiện phòng đã kết thúc.
+        const timer = setInterval(async () => {
+            const result = await apiFetch(`/streams/${stream.id}`);
+            if (result.ok && (result.data.state?.status === 'ENDED' || result.data.stream?.status === 'ENDED')) {
+                leaveEndedStream();
+            }
+        }, 10_000);
+        return () => clearInterval(timer);
+    }, [stream.id, leaveEndedStream]);
 
     useEffect(() => {
         const video = videoRef.current;
@@ -118,6 +145,10 @@ export default function StreamRoom({ stream, initialState, user }) {
         const result = await apiFetch(`/streams/${stream.id}/actions`, { method: 'POST', body });
         setBusy(false);
         if (result.ok) {
+            if (action === 'END' && result.data.state?.status === 'ENDED') {
+                leaveEndedStream();
+                return;
+            }
             setState(receivedState(result.data.state));
             setError(null);
         } else {
