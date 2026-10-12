@@ -5,9 +5,13 @@ import { verifyToken } from '../lib/jwt.js';
 import { SESSION_COOKIE } from '../lib/sessionCookie.js';
 import { findActiveUserById } from '../services/auth.service.js';
 import { getStreamState, heartbeatViewer } from '../services/streamState.service.js';
+import { listRecentMessages, publishMessage } from '../services/chat.service.js';
 
 const joinSchema = z.object({
     streamId: z.string().min(1).max(100),
+});
+const chatSchema = z.object({
+    text: z.string().trim().min(1).max(500),
 });
 
 const roomName = (streamId) => `stream:${streamId}`;
@@ -69,7 +73,8 @@ export function registerStreamSockets(io) {
                 socket.join(roomName(streamId));
                 socket.data.streamId = streamId;
                 const audience = await heartbeatViewer(streamId, socket.id);
-                ack({ ok: true, state, ...audience });
+                const messages = await listRecentMessages(streamId);
+                ack({ ok: true, state, messages, ...audience });
             } catch (error) {
                 console.error('[socket] stream:join:', error);
                 ack({ ok: false, code: 'INTERNAL_ERROR' });
@@ -85,6 +90,40 @@ export function registerStreamSockets(io) {
                 ack({ ok: true, ...await heartbeatViewer(streamId, socket.id) });
             } catch (error) {
                 console.error('[socket] stream:heartbeat:', error);
+                ack({ ok: false, code: 'INTERNAL_ERROR' });
+            }
+        });
+
+        socket.on('stream:chat:send', async (input, ack) => {
+            if (typeof ack !== 'function') return;
+            const streamId = socket.data.streamId;
+            if (!streamId) return ack({ ok: false, code: 'NOT_IN_STREAM' });
+
+            try {
+                const parsed = chatSchema.safeParse(input);
+                if (!parsed.success) return ack({ ok: false, code: 'VALIDATION_ERROR' });
+
+                const user = socket.data.user
+                    ? await findActiveUserById(socket.data.user.id)
+                    : null;
+                if (!user) return ack({ ok: false, code: 'UNAUTHENTICATED' });
+
+                const stream = await prisma.stream.findUnique({
+                    where: { id: streamId },
+                    select: { status: true },
+                });
+                if (!stream || stream.status === 'ENDED') {
+                    return ack({ ok: false, code: 'STREAM_NOT_FOUND' });
+                }
+
+                const message = await publishMessage(streamId, user, parsed.data.text);
+                io.to(roomName(streamId)).emit('stream:chat', message);
+                ack({ ok: true, message });
+            } catch (error) {
+                if (error.code === 'CHAT_RATE_LIMIT') {
+                    return ack({ ok: false, code: error.code });
+                }
+                console.error('[socket] stream:chat:send:', error);
                 ack({ ok: false, code: 'INTERNAL_ERROR' });
             }
         });
