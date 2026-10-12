@@ -23,6 +23,7 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   videos       Video[]
+  streams      Stream[]
 }
 
 model Category {
@@ -56,10 +57,54 @@ model Video {
   uploaderId String
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId String?
+  streams    Stream[]
 
   // Chỉ mục cho các truy vấn thường dùng; KHÔNG đánh chỉ mục status (ít giá trị khác nhau)
   @@index([uploaderId])
   @@index([categoryId])
   @@index([createdAt])
   @@index([viewCount])
+}
+
+enum StreamStatus {
+  CREATED
+  PLAYING
+  PAUSED
+  ENDED
+}
+
+model Stream {
+  id             String       @id @default(cuid())
+  title          String
+  status         StreamStatus @default(CREATED)
+  requireAuth    Boolean      @default(false)
+  positionMs     Int          @default(0)
+  stateChangedAt DateTime?
+  startedAt      DateTime?
+  endedAt        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  owner          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        String
+  video          Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  videoId        String
+  samples        StreamSample[]
+
+  @@index([ownerId, createdAt])
+  @@index([videoId])
+  @@index([status, createdAt])
+}
+
+model StreamSample {
+  id         String   @id @default(cuid())
+  ts         DateTime @default(now())
+  viewers    Int
+  positionMs Int
+
+  stream     Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId   String
+
+  @@unique([streamId, ts])
+  @@index([streamId, ts])
 }
