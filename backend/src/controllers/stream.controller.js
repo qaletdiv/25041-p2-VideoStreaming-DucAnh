@@ -9,3 +9,9 @@ export async function getStream(req, res) {
     const result = await streamService.getStream(req.params.id, req.user);
     res.json(result);
 }
+
+export async function controlStream(req, res) {
+    const state = await streamService.controlStream(req.params.id, req.user, req.body);
+    req.app.get('io').to(`stream:${req.params.id}`).emit('stream:state', state);
+    res.json({ state });
+}
