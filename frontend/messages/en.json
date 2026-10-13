@@ -203,6 +203,21 @@
             "failed": "The donation could not be confirmed. You can retry with the same content."
         }
     },
+    "overlay": {
+        "edit": "Edit donation overlay",
+        "hint": "Drag the overlay on the video to move it. Drag its bottom-right corner to resize. Arrow keys also work when the overlay or resize handle is focused. Save to apply.",
+        "move": "Move donation overlay",
+        "resize": "Resize donation overlay",
+        "x": "Horizontal position",
+        "y": "Vertical position",
+        "width": "Width",
+        "height": "Height",
+        "save": "Save",
+        "cancel": "Cancel",
+        "saveError": "Could not save overlay settings. Please try again.",
+        "previewName": "Viewer",
+        "previewMessage": "This is a donation overlay preview."
+    },
     "watch": {
         "notFound": "Video not found.",
         "backHome": "Back to home",

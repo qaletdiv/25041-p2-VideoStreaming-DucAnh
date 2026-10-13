@@ -10,12 +10,15 @@ import {
 import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 import DonationPanel from '@/components/stream/DonationPanel';
+import DonationOverlay from '@/components/stream/DonationOverlay';
+import OverlaySettings from '@/components/stream/OverlaySettings';
 
 const socketUrl = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
 const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : null;
 
 export default function StreamRoom({ stream, initialState, user }) {
     const t = useTranslations('streamRoom');
+    const overlayText = useTranslations('overlay');
     const router = useRouter();
     const videoRef = useRef(null);
     const socketRef = useRef(null);
@@ -28,6 +31,14 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [needsPlay, setNeedsPlay] = useState(false);
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
+    const [donationQueue, setDonationQueue] = useState([]);
+    const [overlay, setOverlay] = useState(stream.donationOverlay);
+    const [overlayDraft, setOverlayDraft] = useState(null);
+    const [overlayBusy, setOverlayBusy] = useState(false);
+    const seenDonations = useRef(new Set());
+    const finishDonation = useCallback(() => {
+        setDonationQueue((previous) => previous.slice(1));
+    }, []);
     const isOwner = user?.id === stream.owner.id || user?.role === 'ADMIN';
     const isCreator = user?.id === stream.owner.id;
     const leaveEndedStream = useCallback(() => {
@@ -73,15 +84,26 @@ export default function StreamRoom({ stream, initialState, user }) {
                 setState(receivedState(reply.state));
                 setViewers(reply.viewers);
                 setMessages(reply.messages);
+                if (reply.overlay) setOverlay(reply.overlay);
             });
         });
         socket.on('connect_error', () => setError('CONNECTION_ERROR'));
         socket.on('stream:state', (next) => setState(receivedState(next)));
+        socket.on('stream:overlay', setOverlay);
         socket.on('stream:ended', ({ streamId }) => {
             if (streamId === stream.id) leaveEndedStream();
         });
         socket.on('stream:chat', (message) => {
             setMessages((previous) => [...previous, message].slice(-100));
+        });
+        socket.on('stream:donation', (donation) => {
+            if (donation.streamId !== stream.id || seenDonations.current.has(donation.id)) return;
+            seenDonations.current.add(donation.id);
+            // Chỉ giữ các mã gần đây để tránh bộ nhớ tăng theo thời gian xem.
+            if (seenDonations.current.size > 200) {
+                seenDonations.current.delete(seenDonations.current.values().next().value);
+            }
+            setDonationQueue((previous) => [...previous, donation]);
         });
 
         const heartbeat = setInterval(() => {
@@ -184,6 +206,12 @@ export default function StreamRoom({ stream, initialState, user }) {
                             onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
                             sx={{ width: '100%', height: '100%' }}
                         />
+                        <DonationOverlay
+                            donation={overlayDraft ? { id: 'preview', amount: 10000, user: { name: overlayText('previewName') }, message: overlayText('previewMessage') } : donationQueue[0]}
+                            geometry={overlayDraft ?? overlay}
+                            preview={Boolean(overlayDraft)} onComplete={finishDonation}
+                            onGeometryChange={setOverlayDraft} disabled={overlayBusy}
+                        />
                         {needsPlay && (
                             <Button
                                 variant="contained"
@@ -224,6 +252,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                                     </Stack>
                                 </Stack>
                             )}
+                            {isCreator && <OverlaySettings streamId={stream.id} value={overlay} draft={overlayDraft} onPreview={setOverlayDraft} onSaved={setOverlay} onBusyChange={setOverlayBusy} />}
                         </CardContent>
                     </Card>
                 </Box>

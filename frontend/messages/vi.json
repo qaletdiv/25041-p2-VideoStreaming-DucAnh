@@ -203,6 +203,21 @@
             "failed": "Chưa xác nhận gửi donate thành công. Bạn có thể thử lại cùng nội dung."
         }
     },
+    "overlay": {
+        "edit": "Chỉnh overlay donate",
+        "hint": "Kéo overlay trên video để di chuyển, kéo góc dưới bên phải để đổi kích thước. Có thể dùng phím mũi tên khi chọn overlay hoặc góc kéo. Bấm Lưu để áp dụng.",
+        "move": "Di chuyển overlay donate",
+        "resize": "Đổi kích thước overlay donate",
+        "x": "Vị trí ngang",
+        "y": "Vị trí dọc",
+        "width": "Chiều rộng",
+        "height": "Chiều cao",
+        "save": "Lưu",
+        "cancel": "Hủy",
+        "saveError": "Không lưu được cấu hình overlay. Vui lòng thử lại.",
+        "previewName": "Người xem",
+        "previewMessage": "Đây là bản xem trước overlay donate."
+    },
     "watch": {
         "notFound": "Không tìm thấy video.",
         "backHome": "Về trang chủ",

@@ -52,7 +52,7 @@ export function registerStreamSockets(io) {
                 const { streamId } = parsed.data;
                 const stream = await prisma.stream.findUnique({
                     where: { id: streamId },
-                    select: { status: true, requireAuth: true, video: { select: { status: true } } },
+                    select: { status: true, requireAuth: true, donationOverlay: true, video: { select: { status: true } } },
                 });
                 if (stream?.status === 'ENDED') {
                     return ack({ ok: false, code: 'STREAM_ENDED' });
@@ -77,7 +77,7 @@ export function registerStreamSockets(io) {
                 socket.data.streamId = streamId;
                 const audience = await heartbeatViewer(streamId, socket.id);
                 const messages = await listRecentMessages(streamId);
-                ack({ ok: true, state, messages, ...audience });
+                ack({ ok: true, state, messages, overlay: stream.donationOverlay, ...audience });
             } catch (error) {
                 console.error('[socket] stream:join:', error);
                 ack({ ok: false, code: 'INTERNAL_ERROR' });

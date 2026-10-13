@@ -27,5 +27,5 @@ export default async function StreamPage({ params }) {
     if (result.data.state?.status === 'ENDED' || result.data.stream.status === 'ENDED') {
         redirect({ href: user?.id === result.data.stream.owner.id ? '/dashboard' : '/', locale: await getLocale() });
     }
-    return <StreamRoom stream={result.data.stream} initialState={result.data.state} user={user} />;
+    return <StreamRoom key={result.data.stream.id} stream={result.data.stream} initialState={result.data.state} user={user} />;
 }
