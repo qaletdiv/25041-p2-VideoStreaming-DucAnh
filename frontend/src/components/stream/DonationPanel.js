@@ -1,33 +1,23 @@
 'use client';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { useFormatter, useTranslations } from 'next-intl';
-import { Alert, Box, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import { Alert, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
 import { Link } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 import { donationSchema } from '@/lib/validations/donation';
 
-export default function DonationPanel({ streamId, user, isCreator, refreshKey, latestDonation }) {
+export default function DonationPanel({ streamId, user }) {
     const t = useTranslations('donation');
-    const format = useFormatter();
-    const [history, setHistory] = useState({ donations: [] });
     const [error, setError] = useState(null);
-    const [historyError, setHistoryError] = useState(false);
     const [success, setSuccess] = useState(false);
     const [pending, startTransition] = useTransition();
     const requestRef = useRef(null);
 
     useEffect(() => {
-        if (!isCreator) return;
-        let active = true;
-        apiFetch(`/streams/${streamId}/donations?page=1&limit=5`).then((result) => {
-            if (!active) return;
-            setHistoryError(!result.ok);
-            if (result.ok) setHistory(result.data);
-        });
-        return () => { active = false; };
-    }, [streamId, refreshKey, isCreator]);
-
-    const amountText = (amount) => format.number(amount, { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
+        if (!success) return;
+        const timer = setTimeout(() => setSuccess(false), 3000);
+        return () => clearTimeout(timer);
+    }, [success]);
 
     function submit(event) {
         event.preventDefault();
@@ -64,9 +54,8 @@ export default function DonationPanel({ streamId, user, isCreator, refreshKey, l
         <Card sx={{ mt: 3 }}>
             <CardContent>
                 <Stack spacing={2}>
-                    <Typography variant="h6">{t(isCreator ? 'history' : 'title')}</Typography>
-                    {isCreator && latestDonation && <Alert severity="info">{t('received', { name: latestDonation.user.name, amount: amountText(latestDonation.amount) })}</Alert>}
-                    {!isCreator && (user ? (
+                    <Typography variant="h6">{t('title')}</Typography>
+                    {user ? (
                         <Stack component="form" onSubmit={submit} spacing={2} noValidate>
                             <TextField name="amount" type="number" label={t('amount')} defaultValue="10000" required disabled={pending} slotProps={{ htmlInput: { min: 1000, max: 1000000, step: 1000 } }} helperText={t('amountHint')} />
                             <TextField name="message" label={t('message')} multiline maxRows={3} disabled={pending} slotProps={{ htmlInput: { maxLength: 300 } }} />
@@ -74,19 +63,7 @@ export default function DonationPanel({ streamId, user, isCreator, refreshKey, l
                             {success && <Alert severity="success">{t('success')}</Alert>}
                             <Button variant="contained" type="submit" disabled={pending}>{t(pending ? 'sending' : 'send')}</Button>
                         </Stack>
-                    ) : <Typography><Link href="/login">{t('loginRequired')}</Link></Typography>)}
-                    {isCreator && (historyError ? <Alert severity="error">{t('historyError')}</Alert> : (
-                        <Stack spacing={1} role="region" aria-label={t('history')} tabIndex={0} sx={{ maxHeight: 300, overflowY: 'auto', pr: 1 }}>
-                            {history.donations.length === 0 && <Typography color="text.secondary">{t('empty')}</Typography>}
-                            {history.donations.map((item) => (
-                                <Box key={item.id} sx={{ borderBottom: 1, borderColor: 'divider', pb: 1, overflowWrap: 'anywhere' }}>
-                                    <Typography variant="body2" sx={{ fontWeight: 700 }}>{t('received', { name: item.user.name, amount: amountText(item.amount) })}</Typography>
-                                    {item.message && <Typography variant="body2">{item.message}</Typography>}
-                                    <Typography variant="caption" color="text.secondary">{format.dateTime(new Date(item.createdAt), { dateStyle: 'short', timeStyle: 'short' })}</Typography>
-                                </Box>
-                            ))}
-                        </Stack>
-                    ))}
+                    ) : <Typography><Link href="/login">{t('loginRequired')}</Link></Typography>}
                 </Stack>
             </CardContent>
         </Card>

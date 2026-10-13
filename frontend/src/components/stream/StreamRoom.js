@@ -28,8 +28,6 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [needsPlay, setNeedsPlay] = useState(false);
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
-    const [donationRefresh, setDonationRefresh] = useState(0);
-    const [latestDonation, setLatestDonation] = useState(null);
     const isOwner = user?.id === stream.owner.id || user?.role === 'ADMIN';
     const isCreator = user?.id === stream.owner.id;
     const leaveEndedStream = useCallback(() => {
@@ -75,7 +73,6 @@ export default function StreamRoom({ stream, initialState, user }) {
                 setState(receivedState(reply.state));
                 setViewers(reply.viewers);
                 setMessages(reply.messages);
-                setDonationRefresh((value) => value + 1);
             });
         });
         socket.on('connect_error', () => setError('CONNECTION_ERROR'));
@@ -85,10 +82,6 @@ export default function StreamRoom({ stream, initialState, user }) {
         });
         socket.on('stream:chat', (message) => {
             setMessages((previous) => [...previous, message].slice(-100));
-        });
-        socket.on('stream:donation', (donation) => {
-            setLatestDonation(donation);
-            setDonationRefresh((value) => value + 1);
         });
 
         const heartbeat = setInterval(() => {
@@ -268,7 +261,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                 </Card>
             </Stack>
             {error && <Alert severity="error" sx={{ mt: 2 }}>{t(`errors.${error}`)}</Alert>}
-            <DonationPanel streamId={stream.id} user={user} isCreator={isCreator} refreshKey={donationRefresh} latestDonation={latestDonation} />
+            {!isCreator && <DonationPanel streamId={stream.id} user={user} />}
         </Box>
     );
 }
