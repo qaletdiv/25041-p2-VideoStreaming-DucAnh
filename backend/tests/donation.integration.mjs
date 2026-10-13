@@ -45,6 +45,8 @@ test('Donate: quyền truy cập, validation, realtime, gửi lại và phòng �
         const payload = { amount: 10000, message: 'Xin chào', requestId: randomUUID(), userId: ownerId };
         assert.equal((await request('/donations', null, payload)).status, 401);
         assert.equal((await request('/donations', null)).status, 401);
+        assert.equal((await request('/donations', viewerCookie)).status, 403);
+        assert.equal((await request('/donations', ownerCookie, payload)).status, 403);
         for (const amount of [-1, 0, 999, 1000.5, 1000001, '10000']) {
             assert.equal((await request('/donations', viewerCookie, { ...payload, amount })).status, 400);
         }
@@ -62,12 +64,14 @@ test('Donate: quyền truy cập, validation, realtime, gửi lại và phòng �
         assert.equal(retried.status, 200);
         assert.equal(retried.data.donation.id, created.data.donation.id);
         assert.equal((await request('/donations', viewerCookie, { ...payload, amount: 20000 })).status, 409);
-        const history = await request('/donations?page=1&limit=1', viewerCookie);
+        const history = await request('/donations?page=1&limit=1', ownerCookie);
+        assert.equal(history.status, 200);
         assert.equal(history.data.total, 1);
         assert.equal(history.data.donations[0].message, 'Xin chào');
         assert.equal(history.data.donations[0].user.passwordHash, undefined);
         await prisma.stream.update({ where: { id: streamId }, data: { requireAuth: false } });
-        assert.equal((await request('/donations', null)).status, 200);
+        assert.equal((await request('/donations', null)).status, 401);
+        assert.equal((await request('/donations', viewerCookie)).status, 403);
         assert.equal((await request('/actions', ownerCookie, { action: 'END' })).status, 200);
         const ended = await request('/donations', viewerCookie, { ...payload, requestId: randomUUID() });
         assert.equal(ended.status, 409);

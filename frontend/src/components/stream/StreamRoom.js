@@ -268,7 +268,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                 </Card>
             </Stack>
             {error && <Alert severity="error" sx={{ mt: 2 }}>{t(`errors.${error}`)}</Alert>}
-            <DonationPanel streamId={stream.id} user={user} refreshKey={donationRefresh} latestDonation={latestDonation} />
+            <DonationPanel streamId={stream.id} user={user} isCreator={isCreator} refreshKey={donationRefresh} latestDonation={latestDonation} />
         </Box>
     );
 }

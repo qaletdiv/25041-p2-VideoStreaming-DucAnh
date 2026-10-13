@@ -9,7 +9,10 @@ const select = {
 };
 
 export async function listDonations(streamId, user, { page, limit }) {
-    await getStream(streamId, user);
+    const { stream } = await getStream(streamId, user);
+    if (stream.owner.id !== user?.id) {
+        throw new HttpError(403, 'FORBIDDEN', 'Only the stream owner can view donation history');
+    }
     const where = { streamId };
     const [donations, total] = await prisma.$transaction([
         prisma.donation.findMany({ where, select, orderBy: [{ createdAt: 'desc' }, { id: 'desc' }], skip: (page - 1) * limit, take: limit }),
@@ -21,6 +24,10 @@ export async function listDonations(streamId, user, { page, limit }) {
 export async function createDonation(streamId, user, input) {
     // Dùng chung khóa điều khiển để không ghi donate sau khi phòng đã kết thúc.
     const result = await withStreamControlLock(streamId, async () => {
+        const { stream, state } = await getStream(streamId, user);
+        if (stream.owner.id === user.id) {
+            throw new HttpError(403, 'FORBIDDEN', 'The stream owner cannot donate to their own stream');
+        }
         const existing = await prisma.donation.findUnique({
             where: { userId_requestId: { userId: user.id, requestId: input.requestId } },
             select,
@@ -31,7 +38,6 @@ export async function createDonation(streamId, user, input) {
             }
             return { donation: existing, created: false };
         }
-        const { stream, state } = await getStream(streamId, user);
         if (stream.status === 'ENDED' || state?.status === 'ENDED') {
             throw new HttpError(409, 'STREAM_ENDED', 'Stream has ended');
         }

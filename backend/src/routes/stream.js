@@ -11,7 +11,7 @@ const router = Router();
 router.post('/', authenticate, validate(createStreamSchema), streamController.createStream);
 router.get('/', streamController.listStreams);
 router.get('/:id', optionalAuthenticate, validate(streamIdSchema, 'params'), streamController.getStream);
-router.get('/:id/donations', optionalAuthenticate, validate(streamIdSchema, 'params'), validate(listDonationsSchema, 'query'), donationController.listDonations);
+router.get('/:id/donations', authenticate, validate(streamIdSchema, 'params'), validate(listDonationsSchema, 'query'), donationController.listDonations);
 router.post('/:id/donations', authenticate, validate(streamIdSchema, 'params'), validate(createDonationSchema), donationController.createDonation);
 router.post(
     '/:id/actions',
