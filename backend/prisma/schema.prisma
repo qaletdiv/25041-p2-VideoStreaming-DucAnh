@@ -79,6 +79,7 @@ model Stream {
   title          String
   status         StreamStatus @default(CREATED)
   requireAuth    Boolean      @default(false)
+  donationOverlay Json        @default("{\"x\":20,\"y\":5,\"width\":60,\"height\":30}")
   positionMs     Int          @default(0)
   stateChangedAt DateTime?
   startedAt      DateTime?

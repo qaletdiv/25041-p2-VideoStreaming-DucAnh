@@ -11,6 +11,12 @@ export async function listStreams(req, res) {
     res.json({ streams });
 }
 
+export async function updateStreamOverlay(req, res) {
+    const overlay = await streamService.updateStreamOverlay(req.params.id, req.user, req.body);
+    req.app.get('io').to(`stream:${req.params.id}`).emit('stream:overlay', overlay);
+    res.json({ overlay });
+}
+
 export async function getStream(req, res) {
     const result = await streamService.getStream(req.params.id, req.user);
     res.json(result);

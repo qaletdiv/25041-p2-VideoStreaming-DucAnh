@@ -59,6 +59,7 @@ export async function getStream(id, user) {
             status: true,
             requireAuth: true,
             positionMs: true,
+            donationOverlay: true,
             stateChangedAt: true,
             startedAt: true,
             endedAt: true,
@@ -144,4 +145,12 @@ export async function controlStream(id, user, { action, positionMs = 0 }) {
 
     if (!result) throw new HttpError(409, 'STREAM_BUSY', 'Stream control is busy');
     return result;
+}
+
+export async function updateStreamOverlay(id, user, donationOverlay) {
+    const stream = await prisma.stream.findUnique({ where: { id }, select: { ownerId: true } });
+    if (!stream) throw new HttpError(404, 'STREAM_NOT_FOUND', 'Stream not found');
+    if (stream.ownerId !== user.id) throw new HttpError(403, 'FORBIDDEN', 'Only the owner can change the overlay');
+    const updated = await prisma.stream.update({ where: { id }, data: { donationOverlay }, select: { donationOverlay: true } });
+    return updated.donationOverlay;
 }

@@ -15,7 +15,7 @@ import { registerStreamSockets } from '../src/socket/streams.js';
 
 const { io: connect } = createRequire(new URL('../../frontend/package.json', import.meta.url))('socket.io-client');
 
-test('Donate: quyền truy cập, validation, realtime, gửi lại và phòng đã kết thúc', async () => {
+test('Donate và overlay: quyền truy cập, validation, realtime, lưu cấu hình và phòng đã kết thúc', async () => {
     const ownerId = randomUUID();
     const viewerId = randomUUID();
     const streamId = randomUUID();
@@ -34,9 +34,9 @@ test('Donate: quyền truy cập, validation, realtime, gửi lại và phòng �
         const base = `http://127.0.0.1:${server.address().port}`;
         const ownerCookie = `session=${await signToken({ userId: ownerId, role: 'USER' })}`;
         const viewerCookie = `session=${await signToken({ userId: viewerId, role: 'USER' })}`;
-        async function request(path, cookie, body) {
+        async function request(path, cookie, body, method = body ? 'POST' : 'GET') {
             const response = await fetch(`${base}/api/streams/${streamId}${path}`, {
-                method: body ? 'POST' : 'GET',
+                method,
                 headers: { 'Content-Type': 'application/json', ...(cookie ? { cookie } : {}) },
                 ...(body ? { body: JSON.stringify(body) } : {}),
             });
@@ -55,6 +55,17 @@ test('Donate: quyền truy cập, validation, realtime, gửi lại và phòng �
         await once(socket, 'connect', { signal: AbortSignal.timeout(5000) });
         const joined = await socket.timeout(5000).emitWithAck('stream:join', { streamId });
         assert.equal(joined.ok, true);
+        const overlay = { x: 10, y: 50, width: 70, height: 25 };
+        assert.equal((await request('/overlay', null, overlay, 'PUT')).status, 401);
+        assert.equal((await request('/overlay', viewerCookie, overlay, 'PUT')).status, 403);
+        assert.equal((await request('/overlay', ownerCookie, { ...overlay, x: 90 }, 'PUT')).status, 400);
+        assert.equal((await request('/overlay', ownerCookie, { ...overlay, height: 5 }, 'PUT')).status, 400);
+        const overlayEvent = once(socket, 'stream:overlay', { signal: AbortSignal.timeout(5000) });
+        assert.equal((await request('/overlay', ownerCookie, overlay, 'PUT')).status, 200);
+        assert.deepEqual((await overlayEvent)[0], overlay);
+        assert.deepEqual((await request('', viewerCookie)).data.stream.donationOverlay, overlay);
+        const rejoined = await socket.timeout(5000).emitWithAck('stream:join', { streamId });
+        assert.deepEqual(rejoined.overlay, overlay);
         const event = once(socket, 'stream:donation', { signal: AbortSignal.timeout(5000) });
         const created = await request('/donations', viewerCookie, payload);
         assert.equal(created.status, 201);

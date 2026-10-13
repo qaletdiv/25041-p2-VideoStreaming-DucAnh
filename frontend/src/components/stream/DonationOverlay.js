@@ -3,15 +3,15 @@ import { useEffect } from 'react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Box, Typography } from '@mui/material';
 
-export default function DonationOverlay({ donation, onComplete }) {
+export default function DonationOverlay({ donation, onComplete, geometry, preview = false }) {
     const t = useTranslations('donation');
     const format = useFormatter();
 
     useEffect(() => {
-        if (!donation) return;
+        if (!donation || preview) return;
         const timer = setTimeout(onComplete, 5000);
         return () => clearTimeout(timer);
-    }, [donation?.id, onComplete]);
+    }, [donation?.id, onComplete, preview]);
 
     if (!donation) return null;
 
@@ -22,9 +22,9 @@ export default function DonationOverlay({ donation, onComplete }) {
             aria-live="polite"
             aria-atomic="true"
             sx={{
-                position: 'absolute', top: { xs: 8, sm: 16 }, left: '50%',
-                transform: 'translateX(-50%)', zIndex: 1,
-                width: 'max-content', maxWidth: '90%', maxHeight: '80%', overflow: 'hidden',
+                position: 'absolute', top: `${geometry.y}%`, left: `${geometry.x}%`, zIndex: 1,
+                width: `${geometry.width}%`, height: `${geometry.height}%`, boxSizing: 'border-box', overflow: 'hidden',
+                display: 'flex', flexDirection: 'column', justifyContent: 'center',
                 px: { xs: 1.5, sm: 3 }, py: { xs: 1, sm: 2 }, borderRadius: 2,
                 bgcolor: 'rgba(35, 20, 75, 0.92)', color: 'white',
                 border: '1px solid', borderColor: 'primary.light',
