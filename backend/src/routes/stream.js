@@ -3,12 +3,16 @@ import { authenticate, optionalAuthenticate } from '../middleware/authenticate.j
 import { validate } from '../middleware/validate.js';
 import { createStreamSchema, streamIdSchema, streamActionSchema } from '../validations/stream.js';
 import * as streamController from '../controllers/stream.controller.js';
+import * as donationController from '../controllers/donation.controller.js';
+import { createDonationSchema, listDonationsSchema } from '../validations/donation.js';
 
 const router = Router();
 
 router.post('/', authenticate, validate(createStreamSchema), streamController.createStream);
 router.get('/', streamController.listStreams);
 router.get('/:id', optionalAuthenticate, validate(streamIdSchema, 'params'), streamController.getStream);
+router.get('/:id/donations', optionalAuthenticate, validate(streamIdSchema, 'params'), validate(listDonationsSchema, 'query'), donationController.listDonations);
+router.post('/:id/donations', authenticate, validate(streamIdSchema, 'params'), validate(createDonationSchema), donationController.createDonation);
 router.post(
     '/:id/actions',
     authenticate,

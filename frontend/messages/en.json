@@ -179,6 +179,30 @@
             "FORBIDDEN": "You cannot control this room."
         }
     },
+    "donation": {
+        "title": "Simulated donation",
+        "description": "Amounts are for this project simulation only. No payment or balance deduction occurs.",
+        "amount": "Simulated amount (VND)",
+        "amountHint": "Enter a whole number from 1,000 to 1,000,000 VND.",
+        "message": "Message (optional)",
+        "send": "Send simulated donation",
+        "sending": "Sending…",
+        "success": "Simulated donation sent.",
+        "loginRequired": "Sign in to donate",
+        "history": "Room donation history",
+        "historyError": "Could not load donation history.",
+        "empty": "This room has no donations yet.",
+        "received": "{name} donated {amount} (simulated)",
+        "errors": {
+            "amountInvalid": "Enter a whole number from 1,000 to 1,000,000 VND.",
+            "messageTooLong": "The message must be 300 characters or fewer.",
+            "loginRequired": "Please sign in to donate.",
+            "ended": "This stream has ended and cannot receive donations.",
+            "busy": "The room is processing another action. Please try again.",
+            "conflict": "This request was used for another donation. Please reload the page.",
+            "failed": "The donation could not be confirmed. You can retry with the same content."
+        }
+    },
     "watch": {
         "notFound": "Video not found.",
         "backHome": "Back to home",

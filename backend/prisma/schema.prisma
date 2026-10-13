@@ -24,6 +24,7 @@ model User {
   updatedAt    DateTime @updatedAt
   videos       Video[]
   streams      Stream[]
+  donations    Donation[]
 }
 
 model Category {
@@ -90,6 +91,7 @@ model Stream {
   video          Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
   videoId        String
   samples        StreamSample[]
+  donations      Donation[]
 
   @@index([ownerId, createdAt])
   @@index([videoId])
@@ -107,4 +109,20 @@ model StreamSample {
 
   @@unique([streamId, ts])
   @@index([streamId, ts])
+}
+
+model Donation {
+  id        String   @id @default(cuid())
+  amount    Int
+  message   String   @default("")
+  requestId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId  String
+
+  @@unique([userId, requestId])
+  @@index([streamId, createdAt])
 }
