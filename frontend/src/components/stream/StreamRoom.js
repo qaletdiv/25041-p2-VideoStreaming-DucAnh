@@ -34,6 +34,7 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [donationQueue, setDonationQueue] = useState([]);
     const [overlay, setOverlay] = useState(stream.donationOverlay);
     const [overlayDraft, setOverlayDraft] = useState(null);
+    const [overlayBusy, setOverlayBusy] = useState(false);
     const seenDonations = useRef(new Set());
     const finishDonation = useCallback(() => {
         setDonationQueue((previous) => previous.slice(1));
@@ -209,6 +210,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                             donation={overlayDraft ? { id: 'preview', amount: 10000, user: { name: overlayText('previewName') }, message: overlayText('previewMessage') } : donationQueue[0]}
                             geometry={overlayDraft ?? overlay}
                             preview={Boolean(overlayDraft)} onComplete={finishDonation}
+                            onGeometryChange={setOverlayDraft} disabled={overlayBusy}
                         />
                         {needsPlay && (
                             <Button
@@ -250,7 +252,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                                     </Stack>
                                 </Stack>
                             )}
-                            {isCreator && <OverlaySettings streamId={stream.id} value={overlay} onPreview={setOverlayDraft} onSaved={setOverlay} />}
+                            {isCreator && <OverlaySettings streamId={stream.id} value={overlay} draft={overlayDraft} onPreview={setOverlayDraft} onSaved={setOverlay} onBusyChange={setOverlayBusy} />}
                         </CardContent>
                     </Card>
                 </Box>

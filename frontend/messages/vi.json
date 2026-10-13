@@ -205,7 +205,9 @@
     },
     "overlay": {
         "edit": "Chỉnh overlay donate",
-        "hint": "Điều chỉnh theo phần trăm khung video. Bấm Lưu để áp dụng cho mọi người xem.",
+        "hint": "Kéo overlay trên video để di chuyển, kéo góc dưới bên phải để đổi kích thước. Có thể dùng phím mũi tên khi chọn overlay hoặc góc kéo. Bấm Lưu để áp dụng.",
+        "move": "Di chuyển overlay donate",
+        "resize": "Đổi kích thước overlay donate",
         "x": "Vị trí ngang",
         "y": "Vị trí dọc",
         "width": "Chiều rộng",

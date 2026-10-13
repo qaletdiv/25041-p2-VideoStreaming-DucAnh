@@ -205,7 +205,9 @@
     },
     "overlay": {
         "edit": "Edit donation overlay",
-        "hint": "Adjust percentages of the video area. Save to apply for all viewers.",
+        "hint": "Drag the overlay on the video to move it. Drag its bottom-right corner to resize. Arrow keys also work when the overlay or resize handle is focused. Save to apply.",
+        "move": "Move donation overlay",
+        "resize": "Resize donation overlay",
         "x": "Horizontal position",
         "y": "Vertical position",
         "width": "Width",
