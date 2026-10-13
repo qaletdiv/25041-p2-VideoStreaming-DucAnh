@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { Alert, Box, Button, Card, CardContent, Pagination, Stack, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
 import { Link } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 import { donationSchema } from '@/lib/validations/donation';
@@ -9,8 +9,7 @@ import { donationSchema } from '@/lib/validations/donation';
 export default function DonationPanel({ streamId, user, isCreator, refreshKey, latestDonation }) {
     const t = useTranslations('donation');
     const format = useFormatter();
-    const [history, setHistory] = useState({ donations: [], totalPages: 0 });
-    const [page, setPage] = useState(1);
+    const [history, setHistory] = useState({ donations: [] });
     const [error, setError] = useState(null);
     const [historyError, setHistoryError] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -20,13 +19,13 @@ export default function DonationPanel({ streamId, user, isCreator, refreshKey, l
     useEffect(() => {
         if (!isCreator) return;
         let active = true;
-        apiFetch(`/streams/${streamId}/donations?page=${page}&limit=10`).then((result) => {
+        apiFetch(`/streams/${streamId}/donations?page=1&limit=5`).then((result) => {
             if (!active) return;
             setHistoryError(!result.ok);
             if (result.ok) setHistory(result.data);
         });
         return () => { active = false; };
-    }, [streamId, page, refreshKey, isCreator]);
+    }, [streamId, refreshKey, isCreator]);
 
     const amountText = (amount) => format.number(amount, { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
 
@@ -77,7 +76,7 @@ export default function DonationPanel({ streamId, user, isCreator, refreshKey, l
                         </Stack>
                     ) : <Typography><Link href="/login">{t('loginRequired')}</Link></Typography>)}
                     {isCreator && (historyError ? <Alert severity="error">{t('historyError')}</Alert> : (
-                        <Stack spacing={1}>
+                        <Stack spacing={1} role="region" aria-label={t('history')} tabIndex={0} sx={{ maxHeight: 300, overflowY: 'auto', pr: 1 }}>
                             {history.donations.length === 0 && <Typography color="text.secondary">{t('empty')}</Typography>}
                             {history.donations.map((item) => (
                                 <Box key={item.id} sx={{ borderBottom: 1, borderColor: 'divider', pb: 1, overflowWrap: 'anywhere' }}>
@@ -86,7 +85,6 @@ export default function DonationPanel({ streamId, user, isCreator, refreshKey, l
                                     <Typography variant="caption" color="text.secondary">{format.dateTime(new Date(item.createdAt), { dateStyle: 'short', timeStyle: 'short' })}</Typography>
                                 </Box>
                             ))}
-                            {history.totalPages > 1 && <Pagination count={history.totalPages} page={page} onChange={(_, value) => setPage(value)} />}
                         </Stack>
                     ))}
                 </Stack>
