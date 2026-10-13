@@ -179,6 +179,30 @@
             "FORBIDDEN": "You cannot control this room."
         }
     },
+    "donation": {
+        "title": "Donate",
+        "amount": "Amount (VND)",
+        "amountHint": "Enter a whole number from 1,000 to 1,000,000 VND.",
+        "message": "Message (optional)",
+        "send": "Send donation",
+        "sending": "Sending…",
+        "success": "Donation sent.",
+        "loginRequired": "Sign in to donate",
+        "history": "Room donation history",
+        "historyError": "Could not load donation history.",
+        "empty": "This room has no donations yet.",
+        "received": "{name} donated {amount}",
+        "errors": {
+            "amountInvalid": "Enter a whole number from 1,000 to 1,000,000 VND.",
+            "forbidden": "The host cannot donate to their own room.",
+            "messageTooLong": "The message must be 300 characters or fewer.",
+            "loginRequired": "Please sign in to donate.",
+            "ended": "This stream has ended and cannot receive donations.",
+            "busy": "The room is processing another action. Please try again.",
+            "conflict": "This request was used for another donation. Please reload the page.",
+            "failed": "The donation could not be confirmed. You can retry with the same content."
+        }
+    },
     "watch": {
         "notFound": "Video not found.",
         "backHome": "Back to home",

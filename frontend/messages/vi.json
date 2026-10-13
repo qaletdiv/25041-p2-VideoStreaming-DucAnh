@@ -179,6 +179,30 @@
             "FORBIDDEN": "Bạn không có quyền điều khiển phòng."
         }
     },
+    "donation": {
+        "title": "Donate",
+        "amount": "Số tiền (VND)",
+        "amountHint": "Nhập số nguyên từ 1.000 đến 1.000.000 đồng.",
+        "message": "Lời nhắn (không bắt buộc)",
+        "send": "Gửi donate",
+        "sending": "Đang gửi…",
+        "success": "Đã gửi donate.",
+        "loginRequired": "Đăng nhập để gửi donate",
+        "history": "Lịch sử donate của phòng",
+        "historyError": "Không tải được lịch sử donate.",
+        "empty": "Phòng chưa nhận được donate nào.",
+        "received": "{name} đã donate {amount}",
+        "errors": {
+            "amountInvalid": "Số tiền phải là số nguyên từ 1.000 đến 1.000.000 đồng.",
+            "forbidden": "Chủ phòng không thể donate vào phòng của mình.",
+            "messageTooLong": "Lời nhắn tối đa 300 ký tự.",
+            "loginRequired": "Vui lòng đăng nhập để gửi donate.",
+            "ended": "Phòng đã kết thúc, không thể gửi donate.",
+            "busy": "Phòng đang xử lý thao tác khác. Vui lòng thử lại.",
+            "conflict": "Yêu cầu đã được dùng cho donate khác. Vui lòng tải lại trang.",
+            "failed": "Chưa xác nhận gửi donate thành công. Bạn có thể thử lại cùng nội dung."
+        }
+    },
     "watch": {
         "notFound": "Không tìm thấy video.",
         "backHome": "Về trang chủ",

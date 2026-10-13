@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
+import DonationPanel from '@/components/stream/DonationPanel';
 
 const socketUrl = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
 const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : null;
@@ -260,6 +261,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                 </Card>
             </Stack>
             {error && <Alert severity="error" sx={{ mt: 2 }}>{t(`errors.${error}`)}</Alert>}
+            {!isCreator && <DonationPanel streamId={stream.id} user={user} />}
         </Box>
     );
 }
