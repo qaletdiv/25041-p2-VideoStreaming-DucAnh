@@ -10,6 +10,7 @@ import {
 import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 import DonationPanel from '@/components/stream/DonationPanel';
+import DonationOverlay from '@/components/stream/DonationOverlay';
 
 const socketUrl = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
 const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : null;
@@ -28,6 +29,11 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [needsPlay, setNeedsPlay] = useState(false);
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
+    const [donationQueue, setDonationQueue] = useState([]);
+    const seenDonations = useRef(new Set());
+    const finishDonation = useCallback(() => {
+        setDonationQueue((previous) => previous.slice(1));
+    }, []);
     const isOwner = user?.id === stream.owner.id || user?.role === 'ADMIN';
     const isCreator = user?.id === stream.owner.id;
     const leaveEndedStream = useCallback(() => {
@@ -82,6 +88,15 @@ export default function StreamRoom({ stream, initialState, user }) {
         });
         socket.on('stream:chat', (message) => {
             setMessages((previous) => [...previous, message].slice(-100));
+        });
+        socket.on('stream:donation', (donation) => {
+            if (donation.streamId !== stream.id || seenDonations.current.has(donation.id)) return;
+            seenDonations.current.add(donation.id);
+            // Chỉ giữ các mã gần đây để tránh bộ nhớ tăng theo thời gian xem.
+            if (seenDonations.current.size > 200) {
+                seenDonations.current.delete(seenDonations.current.values().next().value);
+            }
+            setDonationQueue((previous) => [...previous, donation]);
         });
 
         const heartbeat = setInterval(() => {
@@ -184,6 +199,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                             onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
                             sx={{ width: '100%', height: '100%' }}
                         />
+                        <DonationOverlay donation={donationQueue[0]} onComplete={finishDonation} />
                         {needsPlay && (
                             <Button
                                 variant="contained"
