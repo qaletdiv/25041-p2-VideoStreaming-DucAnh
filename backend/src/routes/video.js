@@ -11,6 +11,7 @@ router.get('/', validate(listVideosSchema, 'query'), videoController.listVideos)
 
 // Cần đăng nhập
 router.get('/mine', authenticate, validate(listMyVideosSchema, 'query'), videoController.listMyVideos);
+router.get('/:id/status', authenticate, validate(videoIdSchema, 'params'), videoController.getUploadStatus);
 router.post('/', authenticate, validate(createVideoSchema), videoController.createVideo);
 router.delete('/:id', authenticate, videoController.deleteVideo);
 

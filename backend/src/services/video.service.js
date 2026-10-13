@@ -2,6 +2,7 @@ import { prisma } from '../lib/prisma.js';
 import { env } from '../config/env.js';
 import { HttpError } from '../lib/httpError.js';
 import { getVideoResource, deleteVideoResource } from '../lib/cloudinaryAdmin.js';
+import { checkHlsPlayback } from '../lib/playbackReady.js';
 
 // Ánh xạ sort -> điều kiện sắp xếp của Prisma
 const SORT_BY = {
@@ -74,6 +75,8 @@ export async function createVideo(userId, { publicId, title, description, catego
     if (!publicId.startsWith(folder)) {
         throw new HttpError(403, 'FOLDER_MISMATCH', 'Upload folder does not match your account');
     }
+    const existing = await prisma.video.findUnique({ where: { publicId }, select: MY_VIDEO_SELECT });
+    if (existing) return existing;
 
     // Hỏi Cloudinary Admin API: asset có thật và là video
     const resource = await getVideoResource(publicId);
@@ -86,17 +89,21 @@ export async function createVideo(userId, { publicId, title, description, catego
         if (!category) throw new HttpError(400, 'CATEGORY_NOT_FOUND', 'Category not found');
     }
 
-    return prisma.video.create({
-        data: {
+    const videoUrl = `https://res.cloudinary.com/${env.cloudinary.cloudName}/video/upload/sp_auto/${publicId}.m3u8`;
+    const ready = Number(resource.duration) > 0 && await checkHlsPlayback(videoUrl);
+    return prisma.video.upsert({
+        where: { publicId },
+        update: {},
+        create: {
             title,
             description,
             publicId,
             uploaderId: userId,
             categoryId: categoryId ?? null,
             duration: Math.round(resource.duration ?? 0),
-            videoUrl: `https://res.cloudinary.com/${env.cloudinary.cloudName}/video/upload/sp_auto/${publicId}.m3u8`,
+            videoUrl,
             thumbnailUrl: `https://res.cloudinary.com/${env.cloudinary.cloudName}/video/upload/${publicId}.jpg`,
-            status: 'PROCESSING',
+            status: ready ? 'READY' : 'PROCESSING',
         },
         select: MY_VIDEO_SELECT,
     });
@@ -148,7 +155,7 @@ export async function deleteVideo(userId, role, videoId) {
 export async function finalizeProcessingVideos() {
     const pending = await prisma.video.findMany({
         where: { status: 'PROCESSING', createdAt: { lt: new Date(Date.now() - 30_000) } },
-        select: { id: true, publicId: true, createdAt: true },
+        select: { id: true, publicId: true, createdAt: true, duration: true, videoUrl: true },
     });
 
     for (const video of pending) {
@@ -159,10 +166,10 @@ export async function finalizeProcessingVideos() {
         }
 
         try {
-            const resource = await getVideoResource(video.publicId);
+            const resource = video.duration > 0 ? { duration: video.duration } : await getVideoResource(video.publicId);
             if (!resource) {
                 await prisma.video.update({ where: { id: video.id }, data: { status: 'FAILED' } });
-            } else if (Number(resource.duration) > 0) {
+            } else if (Number(resource.duration) > 0 && await checkHlsPlayback(video.videoUrl)) {
                 await prisma.video.update({
                     where: { id: video.id },
                     data: { status: 'READY', duration: Math.round(resource.duration) },
@@ -173,6 +180,13 @@ export async function finalizeProcessingVideos() {
             // Lỗi Cloudinary -> bỏ qua, duyệt lại ở chu kỳ sau
         }
     }
+}
+
+export async function getUploadStatus(userId, videoId) {
+    const video = await prisma.video.findUnique({ where: { id: videoId }, select: { id: true, uploaderId: true, status: true } });
+    if (!video) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
+    if (video.uploaderId !== userId) throw new HttpError(403, 'FORBIDDEN', 'You do not own this video');
+    return { id: video.id, status: video.status };
 }
 
 // Chi tiết video công khai (chỉ READY; video chưa sẵn sàng coi như không tồn tại)

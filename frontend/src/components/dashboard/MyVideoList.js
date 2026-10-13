@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-    Box, Button, Card, CardContent, CardMedia, Chip, CircularProgress,
+    Box, Button, Card, CardContent, CardMedia, CircularProgress,
     Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
     Grid, IconButton, Stack, Typography,
 } from '@mui/material';
@@ -11,20 +11,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import PlayCircleOutlinedIcon from '@mui/icons-material/PlayCircleOutlined';
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import ErrorIcon from '@mui/icons-material/Error';
 import { Link } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 
 const PAGE_SIZE = 12;
 
-// Màu và icon theo trạng thái video
-const STATUS_CONFIG = {
-    PROCESSING: { color: 'warning', icon: <HourglassBottomIcon sx={{ fontSize: 14 }} /> },
-    READY:      { color: 'success', icon: <CheckCircleIcon sx={{ fontSize: 14 }} /> },
-    FAILED:     { color: 'error',   icon: <ErrorIcon sx={{ fontSize: 14 }} /> },
-};
 
 export default function MyVideoList() {
     const t = useTranslations('dashboard');
@@ -110,7 +101,6 @@ export default function MyVideoList() {
             {!loading && videos.length > 0 && (
                 <Grid container spacing={2}>
                     {videos.map((video) => {
-                        const status = STATUS_CONFIG[video.status] || STATUS_CONFIG.READY;
                         return (
                             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={video.id}>
                                 <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -135,13 +125,6 @@ export default function MyVideoList() {
                                             {video.title}
                                         </Typography>
                                         <Stack direction="row" spacing={1} sx={{ mt: 0.5, alignItems: 'center' }}>
-                                            <Chip
-                                                size="small"
-                                                color={status.color}
-                                                icon={status.icon}
-                                                label={t(`status.${video.status}`)}
-                                                sx={{ height: 22, fontSize: '0.7rem' }}
-                                            />
                                             {video.status === 'READY' && (
                                                 <Typography variant="body2" color="text.secondary">
                                                     {formatDuration(video.duration)}
