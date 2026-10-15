@@ -5,7 +5,7 @@ import Hls from 'hls.js';
 import { io } from 'socket.io-client';
 import {
     Alert, Box, Button, Card, CardContent, Chip, Divider, Slider,
-    Stack, TextField, Typography,
+    Menu, MenuItem, Stack, TextField, Typography,
 } from '@mui/material';
 import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
@@ -36,6 +36,7 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [busy, setBusy] = useState(false);
     const [chatBan, setChatBan] = useState(null);
     const [moderationTarget, setModerationTarget] = useState(null);
+    const [chatUserMenu, setChatUserMenu] = useState(null);
     const [moderationRefresh, setModerationRefresh] = useState(0);
     const receiveChatBan = useCallback((reply) => {
         setChatBan(reply.ban ? { ...reply.ban, serverNow: reply.serverNow, receivedAt: Date.now() } : null);
@@ -289,14 +290,25 @@ export default function StreamRoom({ stream, initialState, user }) {
                             {messages.map((message) => (
                                 <Box key={message.id}>
                                     <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
-                                        <Box component="strong">{message.user.name}: </Box>{message.text}
+                                        {isOwner && message.user.id !== stream.owner.id && message.user.id !== user?.id && message.user.role !== 'ADMIN' ? (
+                                            <Box component="button" type="button"
+                                                aria-haspopup="menu"
+                                                aria-expanded={chatUserMenu?.messageId === message.id}
+                                                onClick={(event) => setChatUserMenu({ anchorEl: event.currentTarget, user: message.user, messageId: message.id })}
+                                                sx={{ border: 0, p: 0, bgcolor: 'transparent', color: 'inherit', font: 'inherit', fontWeight: 700, cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                                            >{message.user.name}</Box>
+                                        ) : <Box component="strong">{message.user.name}</Box>}
+                                        {': '}{message.text}
                                     </Typography>
-                                    {isOwner && message.user.id !== stream.owner.id && message.user.id !== user?.id && message.user.role !== 'ADMIN' && (
-                                        <Button size="small" color="error" onClick={() => setModerationTarget(message.user)}>{moderationText('ban')}</Button>
-                                    )}
                                 </Box>
                             ))}
                         </Stack>
+                        <Menu anchorEl={chatUserMenu?.anchorEl ?? null} open={Boolean(chatUserMenu)} onClose={() => setChatUserMenu(null)}>
+                            <MenuItem sx={{ color: 'error.main' }} onClick={() => {
+                                setModerationTarget(chatUserMenu.user);
+                                setChatUserMenu(null);
+                            }}>{moderationText('ban')}</MenuItem>
+                        </Menu>
                     </CardContent>
                     <Divider />
                     <Box component="form" onSubmit={sendChat} sx={{ p: 2 }}>
@@ -304,7 +316,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                             <Stack spacing={1}>
                                 {chatBan && <Alert severity="warning">
                                     {chatBan.expiresAt ? moderationText('bannedUntil', { time: format.dateTime(new Date(chatBan.expiresAt), { dateStyle: 'short', timeStyle: 'short' }) }) : moderationText('bannedPermanent')}
-                                    {chatBan.reason && <Typography variant="body2">{chatBan.reason}</Typography>}
+                                    {chatBan.reason && <Typography variant="body2"><Box component="strong">{moderationText('reasonLabel')}: </Box>{chatBan.reason}</Typography>}
                                 </Alert>}
                                 <TextField
                                     disabled={Boolean(chatBan)}

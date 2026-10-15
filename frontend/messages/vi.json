@@ -227,6 +227,7 @@
         "minutes": "{count} phút",
         "permanent": "Vĩnh viễn",
         "reason": "Lý do (không bắt buộc)",
+        "reasonLabel": "Lý do",
         "ban": "Cấm chat",
         "unban": "Gỡ cấm",
         "close": "Đóng",

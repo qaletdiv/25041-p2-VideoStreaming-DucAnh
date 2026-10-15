@@ -227,6 +227,7 @@
         "minutes": "{count} minutes",
         "permanent": "Permanent",
         "reason": "Reason (optional)",
+        "reasonLabel": "Reason",
         "ban": "Ban from chat",
         "unban": "Unban",
         "close": "Close",
