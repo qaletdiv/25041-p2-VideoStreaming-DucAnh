@@ -6,6 +6,7 @@ import { SESSION_COOKIE } from '../lib/sessionCookie.js';
 import { findActiveUserById } from '../services/auth.service.js';
 import { getStreamState, heartbeatViewer } from '../services/streamState.service.js';
 import { listRecentMessages, publishMessage } from '../services/chat.service.js';
+import { getActiveChatBan } from '../services/chatBan.service.js';
 
 const joinSchema = z.object({
     streamId: z.string().min(1).max(100),
@@ -42,6 +43,7 @@ export function registerStreamSockets(io) {
     });
 
     io.on('connection', (socket) => {
+        if (socket.data.user) socket.join(`user:${socket.data.user.id}`);
         socket.on('stream:join', async (input, ack) => {
             if (typeof ack !== 'function') return;
 
@@ -77,7 +79,8 @@ export function registerStreamSockets(io) {
                 socket.data.streamId = streamId;
                 const audience = await heartbeatViewer(streamId, socket.id);
                 const messages = await listRecentMessages(streamId);
-                ack({ ok: true, state, messages, overlay: stream.donationOverlay, ...audience });
+                const ban = await getActiveChatBan(streamId, socket.data.user?.id);
+                ack({ ok: true, state, messages, ban, serverNow: Date.now(), overlay: stream.donationOverlay, ...audience });
             } catch (error) {
                 console.error('[socket] stream:join:', error);
                 ack({ ok: false, code: 'INTERNAL_ERROR' });
@@ -90,7 +93,8 @@ export function registerStreamSockets(io) {
             if (!streamId) return ack({ ok: false, code: 'NOT_IN_STREAM' });
 
             try {
-                ack({ ok: true, ...await heartbeatViewer(streamId, socket.id) });
+                const ban = await getActiveChatBan(streamId, socket.data.user?.id);
+                ack({ ok: true, ...await heartbeatViewer(streamId, socket.id), ban, serverNow: Date.now() });
             } catch (error) {
                 console.error('[socket] stream:heartbeat:', error);
                 ack({ ok: false, code: 'INTERNAL_ERROR' });
@@ -119,6 +123,8 @@ export function registerStreamSockets(io) {
                     return ack({ ok: false, code: 'STREAM_NOT_FOUND' });
                 }
 
+                const ban = await getActiveChatBan(streamId, user.id);
+                if (ban) return ack({ ok: false, code: 'CHAT_BANNED', ban, serverNow: Date.now() });
                 const message = await publishMessage(streamId, user, parsed.data.text);
                 io.to(roomName(streamId)).emit('stream:chat', message);
                 ack({ ok: true, message });

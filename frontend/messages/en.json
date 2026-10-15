@@ -220,6 +220,27 @@
         "previewName": "Viewer",
         "previewMessage": "This is a donation overlay preview."
     },
+    "moderation": {
+        "manage": "Manage chat bans",
+        "banUser": "Ban from chat: {name}",
+        "duration": "Ban duration",
+        "minutes": "{count} minutes",
+        "permanent": "Permanent",
+        "reason": "Reason (optional)",
+        "ban": "Ban from chat",
+        "unban": "Unban",
+        "close": "Close",
+        "activeBans": "Active chat bans",
+        "empty": "No active chat bans.",
+        "until": "Until {time}",
+        "bannedUntil": "You are banned from this room's chat until {time}.",
+        "bannedPermanent": "You are permanently banned from this room's chat.",
+        "errors": {
+            "invalid": "Choose 5, 15, 30 minutes or permanent. The reason must be 200 characters or fewer.",
+            "protected": "You cannot ban the host, an admin or yourself.",
+            "failed": "The action failed. Please try again."
+        }
+    },
     "watch": {
         "notFound": "Video not found.",
         "backHome": "Back to home",
