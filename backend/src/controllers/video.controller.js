@@ -15,6 +15,10 @@ export async function listMyVideos(req, res) {
     res.json(result);
 }
 
+export async function getUploadStatus(req, res) {
+    res.json({ video: await videoService.getUploadStatus(req.user.id, req.params.id) });
+}
+
 export async function deleteVideo(req, res) {
     await videoService.deleteVideo(req.user.id, req.user.role, req.params.id);
     res.status(204).end();

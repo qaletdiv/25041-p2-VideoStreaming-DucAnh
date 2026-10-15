@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import {
     Alert, Box, Button, Card, CardContent, FormControl, InputLabel,
@@ -64,10 +64,18 @@ export default function VideoUploadForm({ categories = [] }) {
     const [progress, setProgress] = useState(0);
     const [generalError, setGeneralError] = useState(null);
     const fileInputRef = useRef(null);
+    const uploadedRef = useRef(null);
+    const videoRef = useRef(null);
+    const submittingRef = useRef(false);
+    const activeRef = useRef(true);
+    useEffect(() => {
+        activeRef.current = true;
+        return () => { activeRef.current = false; };
+    }, []);
 
     // ── Chọn / validate file ───────────────────────────────────────────
     const handleFileChange = useCallback((selectedFile) => {
-        if (!selectedFile) return;
+        if (!selectedFile || submittingRef.current) return;
 
         if (!ACCEPTED_VIDEO_TYPES.includes(selectedFile.type) && !selectedFile.type.startsWith('video/')) {
             setErrors((prev) => ({ ...prev, file: ['fileInvalidType'] }));
@@ -79,6 +87,10 @@ export default function VideoUploadForm({ categories = [] }) {
         }
 
         setFile(selectedFile);
+        uploadedRef.current = null;
+        videoRef.current = null;
+        setPhase('idle');
+        setProgress(0);
         setErrors((prev) => {
             const { file: _, ...rest } = prev;
             return rest;
@@ -104,6 +116,7 @@ export default function VideoUploadForm({ categories = [] }) {
     // ── Submit: 3 giai đoạn ────────────────────────────────────────────
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (submittingRef.current) return;
         setGeneralError(null);
 
         // Phải chọn file
@@ -120,50 +133,76 @@ export default function VideoUploadForm({ categories = [] }) {
             return;
         }
         setErrors({});
+        submittingRef.current = true;
 
         try {
             // Giai đoạn 1: xin chữ ký
-            setPhase('uploading');
-            setProgress(0);
+            if (!uploadedRef.current) {
+                setPhase('uploading');
+                setProgress(0);
 
-            const sigRes = await apiFetch('/uploads/signature', { method: 'POST' });
-            if (!sigRes.ok) {
-                throw new Error(t('errors.signatureFailed'));
+                const sigRes = await apiFetch('/uploads/signature', { method: 'POST' });
+                if (!sigRes.ok) {
+                    throw new Error(t('errors.signatureFailed'));
+                }
+                const sig = sigRes.data.data;
+
+                // Giai đoạn 2: upload lên Cloudinary
+                const cloudResult = await uploadToCloudinary({
+                    file,
+                    cloudName: sig.cloudName,
+                    apiKey: sig.apiKey,
+                    folder: sig.folder,
+                    timestamp: sig.timestamp,
+                    signature: sig.signature,
+                    onProgress: setProgress,
+                });
+                uploadedRef.current = cloudResult.public_id;
             }
-            const sig = sigRes.data.data;
-
-            // Giai đoạn 2: upload lên Cloudinary
-            const cloudResult = await uploadToCloudinary({
-                file,
-                cloudName: sig.cloudName,
-                apiKey: sig.apiKey,
-                folder: sig.folder,
-                timestamp: sig.timestamp,
-                signature: sig.signature,
-                onProgress: setProgress,
-            });
+            if (!activeRef.current) return;
 
             // Giai đoạn 3: đăng ký video với backend
             setPhase('registering');
 
-            const body = { publicId: cloudResult.public_id, title: result.data.title };
-            if (result.data.description) body.description = result.data.description;
-            if (result.data.categoryId) body.categoryId = result.data.categoryId;
+            if (!videoRef.current) {
+                const body = { publicId: uploadedRef.current, title: result.data.title };
+                if (result.data.description) body.description = result.data.description;
+                if (result.data.categoryId) body.categoryId = result.data.categoryId;
 
-            const videoRes = await apiFetch('/videos', { method: 'POST', body });
-            if (!videoRes.ok) {
-                throw new Error(videoRes.data?.error?.message || t('errors.serverError'));
+                const videoRes = await apiFetch('/videos', { method: 'POST', body });
+                if (!videoRes.ok) {
+                    throw new Error(videoRes.data?.error?.message || t('errors.serverError'));
+                }
+                videoRef.current = videoRes.data.video;
+            }
+
+            // Chỉ rời trang khi backend xác nhận đường phát đã sẵn sàng.
+            const deadline = Date.now() + 5 * 60_000;
+            while (videoRef.current.status !== 'READY') {
+                if (!activeRef.current) return;
+                if (videoRef.current.status === 'FAILED') throw new Error(t('errors.processingFailed'));
+                if (Date.now() >= deadline) throw new Error(t('errors.processingTimeout'));
+                await new Promise((resolve) => setTimeout(resolve, 3000));
+                if (!activeRef.current) return;
+                const status = await apiFetch(`/videos/${videoRef.current.id}/status`);
+                if (!status.ok) throw new Error(t('errors.serverError'));
+                videoRef.current = status.data.video;
             }
 
             // Thành công
+            if (!activeRef.current) return;
             setPhase('success');
-            setTimeout(() => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            if (activeRef.current) {
                 router.replace('/dashboard');
                 router.refresh();
-            }, 1500);
+            }
         } catch (err) {
+            if (!activeRef.current) return;
             setPhase('error');
             setGeneralError(err.message || t('errors.serverError'));
+        } finally {
+            submittingRef.current = false;
         }
     };
 
@@ -306,7 +345,7 @@ export default function VideoUploadForm({ categories = [] }) {
                             disabled={isSubmitting || phase === 'success'}
                             startIcon={<CloudUploadIcon />}
                         >
-                            {isSubmitting ? t('uploading') : t('submit')}
+                            {isSubmitting ? t(phase === 'uploading' ? 'uploading' : 'registering') : t('submit')}
                         </Button>
                     </Stack>
                 </Box>
