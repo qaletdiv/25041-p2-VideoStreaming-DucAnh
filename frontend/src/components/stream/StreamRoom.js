@@ -1,17 +1,18 @@
 'use client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import Hls from 'hls.js';
 import { io } from 'socket.io-client';
 import {
     Alert, Box, Button, Card, CardContent, Chip, Divider, Slider,
-    Stack, TextField, Typography,
+    Menu, MenuItem, Stack, TextField, Typography,
 } from '@mui/material';
 import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 import DonationPanel from '@/components/stream/DonationPanel';
 import DonationOverlay from '@/components/stream/DonationOverlay';
 import OverlaySettings from '@/components/stream/OverlaySettings';
+import ChatModeration from '@/components/stream/ChatModeration';
 
 const socketUrl = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
 const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : null;
@@ -19,6 +20,8 @@ const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : 
 export default function StreamRoom({ stream, initialState, user }) {
     const t = useTranslations('streamRoom');
     const overlayText = useTranslations('overlay');
+    const moderationText = useTranslations('moderation');
+    const format = useFormatter();
     const router = useRouter();
     const videoRef = useRef(null);
     const socketRef = useRef(null);
@@ -31,6 +34,19 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [needsPlay, setNeedsPlay] = useState(false);
     const [error, setError] = useState(null);
     const [busy, setBusy] = useState(false);
+    const [chatBan, setChatBan] = useState(null);
+    const [moderationTarget, setModerationTarget] = useState(null);
+    const [chatUserMenu, setChatUserMenu] = useState(null);
+    const [moderationRefresh, setModerationRefresh] = useState(0);
+    const receiveChatBan = useCallback((reply) => {
+        setChatBan(reply.ban ? { ...reply.ban, serverNow: reply.serverNow, receivedAt: Date.now() } : null);
+    }, []);
+    useEffect(() => {
+        if (!chatBan?.expiresAt) return;
+        const remaining = Date.parse(chatBan.expiresAt) - chatBan.serverNow - (Date.now() - chatBan.receivedAt);
+        const timer = setTimeout(() => setChatBan(null), Math.max(0, remaining));
+        return () => clearTimeout(timer);
+    }, [chatBan]);
     const [donationQueue, setDonationQueue] = useState([]);
     const [overlay, setOverlay] = useState(stream.donationOverlay);
     const [overlayDraft, setOverlayDraft] = useState(null);
@@ -84,6 +100,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                 setState(receivedState(reply.state));
                 setViewers(reply.viewers);
                 setMessages(reply.messages);
+                receiveChatBan(reply);
                 if (reply.overlay) setOverlay(reply.overlay);
             });
         });
@@ -96,6 +113,10 @@ export default function StreamRoom({ stream, initialState, user }) {
         socket.on('stream:chat', (message) => {
             setMessages((previous) => [...previous, message].slice(-100));
         });
+        socket.on('stream:chat-ban', (reply) => {
+            if (reply.streamId === stream.id) receiveChatBan(reply);
+        });
+        socket.on('stream:moderation-changed', () => setModerationRefresh((value) => value + 1));
         socket.on('stream:donation', (donation) => {
             if (donation.streamId !== stream.id || seenDonations.current.has(donation.id)) return;
             seenDonations.current.add(donation.id);
@@ -109,7 +130,10 @@ export default function StreamRoom({ stream, initialState, user }) {
         const heartbeat = setInterval(() => {
             if (!socket.connected) return;
             socket.emit('stream:heartbeat', (reply) => {
-                if (reply?.ok) setViewers(reply.viewers);
+                if (reply?.ok) {
+                    setViewers(reply.viewers);
+                    receiveChatBan(reply);
+                }
             });
         }, 10_000);
 
@@ -118,7 +142,7 @@ export default function StreamRoom({ stream, initialState, user }) {
             socket.disconnect();
             socketRef.current = null;
         };
-    }, [stream.id, leaveEndedStream]);
+    }, [stream.id, leaveEndedStream, receiveChatBan]);
 
     useEffect(() => {
         // Khi Socket.io gián đoạn, vẫn phát hiện phòng đã kết thúc.
@@ -182,11 +206,13 @@ export default function StreamRoom({ stream, initialState, user }) {
     function sendChat(event) {
         event.preventDefault();
         const text = chatText.trim();
-        if (!text || !socketRef.current?.connected) return;
+        if (!text || chatBan || !socketRef.current?.connected) return;
         socketRef.current.emit('stream:chat:send', { text }, (reply) => {
             if (reply?.ok) {
                 setChatText('');
                 setError(null);
+            } else if (reply?.code === 'CHAT_BANNED') {
+                receiveChatBan(reply);
             } else {
                 setError(reply?.code ?? 'CONNECTION_ERROR');
             }
@@ -259,19 +285,41 @@ export default function StreamRoom({ stream, initialState, user }) {
                 <Card sx={{ width: { xs: '100%', lg: 340 }, display: 'flex', flexDirection: 'column', maxHeight: 650 }}>
                     <CardContent sx={{ flexGrow: 1, overflowY: 'auto' }}>
                         <Typography variant="h6" gutterBottom>{t('chat')}</Typography>
+                        {isOwner && <ChatModeration key={moderationTarget?.id ?? 'list'} streamId={stream.id} target={moderationTarget} onClose={() => setModerationTarget(null)} refreshKey={moderationRefresh} />}
                         <Stack spacing={1}>
                             {messages.map((message) => (
-                                <Typography key={message.id} variant="body2">
-                                    <Box component="strong">{message.user.name}: </Box>{message.text}
-                                </Typography>
+                                <Box key={message.id}>
+                                    <Typography variant="body2" sx={{ overflowWrap: 'anywhere' }}>
+                                        {isOwner && message.user.id !== stream.owner.id && message.user.id !== user?.id && message.user.role !== 'ADMIN' ? (
+                                            <Box component="button" type="button"
+                                                aria-haspopup="menu"
+                                                aria-expanded={chatUserMenu?.messageId === message.id}
+                                                onClick={(event) => setChatUserMenu({ anchorEl: event.currentTarget, user: message.user, messageId: message.id })}
+                                                sx={{ border: 0, p: 0, bgcolor: 'transparent', color: 'inherit', font: 'inherit', fontWeight: 700, cursor: 'pointer', '&:hover': { textDecoration: 'underline' } }}
+                                            >{message.user.name}</Box>
+                                        ) : <Box component="strong">{message.user.name}</Box>}
+                                        {': '}{message.text}
+                                    </Typography>
+                                </Box>
                             ))}
                         </Stack>
+                        <Menu anchorEl={chatUserMenu?.anchorEl ?? null} open={Boolean(chatUserMenu)} onClose={() => setChatUserMenu(null)}>
+                            <MenuItem sx={{ color: 'error.main' }} onClick={() => {
+                                setModerationTarget(chatUserMenu.user);
+                                setChatUserMenu(null);
+                            }}>{moderationText('ban')}</MenuItem>
+                        </Menu>
                     </CardContent>
                     <Divider />
                     <Box component="form" onSubmit={sendChat} sx={{ p: 2 }}>
                         {user ? (
                             <Stack spacing={1}>
+                                {chatBan && <Alert severity="warning">
+                                    {chatBan.expiresAt ? moderationText('bannedUntil', { time: format.dateTime(new Date(chatBan.expiresAt), { dateStyle: 'short', timeStyle: 'short' }) }) : moderationText('bannedPermanent')}
+                                    {chatBan.reason && <Typography variant="body2"><Box component="strong">{moderationText('reasonLabel')}: </Box>{chatBan.reason}</Typography>}
+                                </Alert>}
                                 <TextField
+                                    disabled={Boolean(chatBan)}
                                     value={chatText}
                                     onChange={(event) => setChatText(event.target.value)}
                                     label={t('message')}
@@ -279,7 +327,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                                     size="small"
                                     fullWidth
                                 />
-                                <Button type="submit" variant="contained" disabled={!chatText.trim()}>{t('send')}</Button>
+                                <Button type="submit" variant="contained" disabled={Boolean(chatBan) || !chatText.trim()}>{t('send')}</Button>
                             </Stack>
                         ) : (
                             <Typography variant="body2">

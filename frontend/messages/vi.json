@@ -220,6 +220,28 @@
         "previewName": "Người xem",
         "previewMessage": "Đây là bản xem trước overlay donate."
     },
+    "moderation": {
+        "manage": "Quản lý cấm chat",
+        "banUser": "Cấm chat: {name}",
+        "duration": "Thời hạn cấm",
+        "minutes": "{count} phút",
+        "permanent": "Vĩnh viễn",
+        "reason": "Lý do (không bắt buộc)",
+        "reasonLabel": "Lý do",
+        "ban": "Cấm chat",
+        "unban": "Gỡ cấm",
+        "close": "Đóng",
+        "activeBans": "Người đang bị cấm chat",
+        "empty": "Không có người đang bị cấm chat.",
+        "until": "Đến {time}",
+        "bannedUntil": "Bạn bị cấm chat trong phòng này đến {time}.",
+        "bannedPermanent": "Bạn bị cấm chat vĩnh viễn trong phòng này.",
+        "errors": {
+            "invalid": "Thời hạn phải là 5, 15, 30 phút hoặc vĩnh viễn. Lý do tối đa 200 ký tự.",
+            "protected": "Không thể cấm chủ phòng, Admin hoặc chính mình.",
+            "failed": "Không thực hiện được thao tác. Vui lòng thử lại."
+        }
+    },
     "watch": {
         "notFound": "Không tìm thấy video.",
         "backHome": "Về trang chủ",

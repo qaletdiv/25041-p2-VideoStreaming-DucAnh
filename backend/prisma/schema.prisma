@@ -25,6 +25,8 @@ model User {
   videos       Video[]
   streams      Stream[]
   donations    Donation[]
+  chatBans     StreamChatBan[] @relation("BannedUser")
+  issuedChatBans StreamChatBan[] @relation("BanModerator")
 }
 
 model Category {
@@ -93,6 +95,7 @@ model Stream {
   videoId        String
   samples        StreamSample[]
   donations      Donation[]
+  chatBans       StreamChatBan[]
 
   @@index([ownerId, createdAt])
   @@index([videoId])
@@ -126,4 +129,23 @@ model Donation {
 
   @@unique([userId, requestId])
   @@index([streamId, createdAt])
+}
+
+model StreamChatBan {
+  id          String   @id @default(cuid())
+  expiresAt   DateTime?
+  reason      String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  streamId    String
+  userId      String
+  moderatorId String
+
+  stream      Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user        User   @relation("BannedUser", fields: [userId], references: [id], onDelete: Cascade)
+  moderator   User   @relation("BanModerator", fields: [moderatorId], references: [id], onDelete: Cascade)
+
+  @@unique([streamId, userId])
+  @@index([streamId, expiresAt])
+  @@index([userId])
 }
