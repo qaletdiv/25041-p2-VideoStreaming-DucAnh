@@ -1,4 +1,34 @@
 {
+    "adminUsers": {
+        "search": "Search by name or email",
+        "searchButton": "Search",
+        "refresh": "Refresh",
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "createdAt": "Registered",
+        "actions": "Actions",
+        "tableLabel": "User list",
+        "total": "Total: {count} accounts",
+        "empty": "No matching users found.",
+        "protected": "Admin account",
+        "roles": { "ADMIN": "Admin", "USER": "User" },
+        "statuses": { "all": "All", "active": "Active", "locked": "Locked" },
+        "lock": "Lock account",
+        "unlock": "Unlock",
+        "confirmLock": "Lock {name}'s account? The user will be unable to sign in or use this account. All of their stream rooms will end.",
+        "confirmUnlock": "Unlock {name}'s account so they can sign in and use it again? Ended rooms will not reopen.",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "success": { "locked": "Account locked and stream rooms ended.", "unlocked": "Account unlocked." },
+        "errors": {
+            "failed": "The action failed. Please try again.",
+            "forbidden": "Sign in as an Admin to view this list.",
+            "protected": "You cannot lock an Admin account or yourself.",
+            "streamsPending": "The account is locked, but some stream rooms could not be ended. Click Confirm again to retry."
+        }
+    },
     "nav": {
         "home": "Home",
         "createStream": "Create Stream",
@@ -6,6 +36,7 @@
         "users": "User Management"
     },
     "header": {
+        "logoutFailed": "Could not sign out or end all stream rooms. Please try signing out again.",
         "login": "Log in",
         "menu": "Menu",
         "switchLanguage": "Switch language",

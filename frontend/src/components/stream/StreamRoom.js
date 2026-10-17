@@ -105,6 +105,10 @@ export default function StreamRoom({ stream, initialState, user }) {
             });
         });
         socket.on('connect_error', () => setError('CONNECTION_ERROR'));
+        socket.on('account:locked', () => {
+            router.replace('/login');
+            router.refresh();
+        });
         socket.on('stream:state', (next) => setState(receivedState(next)));
         socket.on('stream:overlay', setOverlay);
         socket.on('stream:ended', ({ streamId }) => {
@@ -142,7 +146,7 @@ export default function StreamRoom({ stream, initialState, user }) {
             socket.disconnect();
             socketRef.current = null;
         };
-    }, [stream.id, leaveEndedStream, receiveChatBan]);
+    }, [stream.id, leaveEndedStream, receiveChatBan, router]);
 
     useEffect(() => {
         // Khi Socket.io gián đoạn, vẫn phát hiện phòng đã kết thúc.

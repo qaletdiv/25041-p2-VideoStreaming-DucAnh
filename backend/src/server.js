@@ -20,7 +20,7 @@ const io = new Server(server, {
     },
 });
 app.set('io', io);
-registerStreamSockets(io);
+const stopStreamSockets = registerStreamSockets(io);
 
 // Định kỳ chuyển video PROCESSING -> READY/FAILED (unref để không giữ process)
 const sweeper = setInterval(() => {
@@ -41,6 +41,7 @@ async function shutdown(signal) {
     console.log(`Nhận ${signal}, đang tắt server...`);
     clearInterval(sweeper);
     clearInterval(streamSampler);
+    stopStreamSockets();
     io.close(async () => {
         await prisma.$disconnect();
         redis.disconnect();
