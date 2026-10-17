@@ -7,6 +7,7 @@ import { findActiveUserById } from '../services/auth.service.js';
 import { getStreamState, heartbeatViewer } from '../services/streamState.service.js';
 import { listRecentMessages, publishMessage } from '../services/chat.service.js';
 import { getActiveChatBan } from '../services/chatBan.service.js';
+import { createOwnerPresence } from './ownerPresence.js';
 
 const joinSchema = z.object({
     streamId: z.string().min(1).max(100),
@@ -31,6 +32,7 @@ function readSessionCookie(header) {
 }
 
 export function registerStreamSockets(io) {
+    const ownerPresence = createOwnerPresence(io);
     io.use(async (socket, next) => {
         try {
             const token = readSessionCookie(socket.handshake.headers.cookie);
@@ -63,7 +65,7 @@ export function registerStreamSockets(io) {
                 const { streamId } = parsed.data;
                 const stream = await prisma.stream.findUnique({
                     where: { id: streamId },
-                    select: { status: true, requireAuth: true, donationOverlay: true, video: { select: { status: true } } },
+                    select: { ownerId: true, status: true, requireAuth: true, donationOverlay: true, video: { select: { status: true } } },
                 });
                 if (stream?.status === 'ENDED') {
                     return ack({ ok: false, code: 'STREAM_ENDED' });
@@ -80,12 +82,15 @@ export function registerStreamSockets(io) {
 
                 const previousId = socket.data.streamId;
                 if (previousId && previousId !== streamId) {
+                    ownerPresence.leave(previousId, socket.id);
                     socket.leave(roomName(previousId));
                     await redis.zrem(viewersKey(previousId), socket.id);
                 }
 
                 socket.join(roomName(streamId));
                 socket.data.streamId = streamId;
+                if (!socket.connected) return;
+                if (socket.data.user?.id === stream.ownerId) ownerPresence.join(streamId, stream.ownerId, socket.id);
                 const audience = await heartbeatViewer(streamId, socket.id);
                 const messages = await listRecentMessages(streamId);
                 const ban = await getActiveChatBan(streamId, socket.data.user?.id);
@@ -150,9 +155,11 @@ export function registerStreamSockets(io) {
         socket.on('disconnect', () => {
             const streamId = socket.data.streamId;
             if (streamId) {
+                ownerPresence.leave(streamId, socket.id);
                 redis.zrem(viewersKey(streamId), socket.id)
                     .catch((error) => console.error('[socket] disconnect:', error));
             }
         });
     });
+    return () => ownerPresence.stop();
 }
