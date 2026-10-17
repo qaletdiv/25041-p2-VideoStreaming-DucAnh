@@ -52,7 +52,7 @@ function RoomDetail({ id, onClose }) {
             {!data && !error && <CircularProgress />}
             {data && <Stack spacing={2}>
                 <Metrics data={data} />
-                <Typography>{t('chartNote', { count: data.sampleCount })}</Typography>
+                <Typography>{t('chartNote')}</Typography>
                 {!samples.length ? <Alert severity="info">{t('emptySamples')}</Alert> : <>
                     <Box component="svg" viewBox="0 0 700 230" role="img" aria-label={t('chart')} sx={{ width: '100%', color: 'primary.main' }}>
                         <title>{t('chart')}</title>
@@ -101,7 +101,6 @@ export default function StreamStatistics({ ownerId, isAdmin }) {
             {isAdmin && <Button component={Link} href="/admin/users">{t('chooseOwner')}</Button>}
             {isAdmin && ownerId && <Button component={Link} href="/dashboard/statistics">{t('all')}</Button>}
         </Stack>
-        <Alert severity="info">{t('note')}</Alert>
         {error && <Alert severity="error">{t('error')}</Alert>}
         {!data && !error && <Box><CircularProgress /></Box>}
         {data && <>

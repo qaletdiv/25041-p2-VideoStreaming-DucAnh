@@ -2,12 +2,12 @@
     "statistics": {
         "title": "Thống kê stream", "refresh": "Tải lại", "chooseOwner": "Chọn streamer từ danh sách người dùng",
         "all": "Tất cả streamer", "owner": "Streamer: {name}", "total": "Tổng số phòng", "active": "Phòng chưa kết thúc",
-        "donationCount": "Số lượt donate", "donationAmount": "Tổng donate", "peak": "Kết nối cao nhất trong một mẫu", "average": "Kết nối trung bình mỗi mẫu",
-        "noData": "Chưa có mẫu", "note": "Thống kê toàn bộ thời gian, cập nhật mỗi 10 giây. Số kết nối tính theo tab, gồm cả chủ phòng; không phải người xem duy nhất. Mẫu chỉ được ghi khi phòng đang phát. Trung bình tính trên các mẫu đã lưu; đỉnh là một mẫu của một phòng, không phải tổng đồng thời của nhiều phòng.",
+        "donationCount": "Số lượt donate", "donationAmount": "Tổng donate", "peak": "Kết nối cao nhất trong phòng stream", "average": "Kết nối trung bình trong phòng stream",
+        "noData": "Chưa có dữ liệu",
         "rooms": "Danh sách phòng stream", "room": "Phòng", "streamer": "Streamer", "status": "Trạng thái", "created": "Ngày tạo", "detail": "Chi tiết",
         "empty": "Chưa có phòng stream.", "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
-        "chart": "Số kết nối xem theo thời gian", "chartNote": "Biểu đồ hiển thị tối đa 120 mẫu gần nhất. Các chỉ số phía trên tính từ toàn bộ {count} mẫu của phòng.",
-        "emptySamples": "Chưa có mẫu người xem. Hãy phát stream ít nhất 10 giây để hệ thống lấy mẫu.", "close": "Đóng"
+        "chart": "Số kết nối xem theo thời gian", "chartNote": "Biểu đồ hiển thị tối đa 120 mốc ghi nhận gần nhất của phòng stream. Các chỉ số phía trên tính từ toàn bộ dữ liệu của phòng.",
+        "emptySamples": "Phòng stream chưa có dữ liệu người xem. Hãy phát stream ít nhất 10 giây để hệ thống ghi nhận.", "close": "Đóng"
     },
     "adminUsers": {
         "statistics": "Thống kê",
