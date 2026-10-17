@@ -58,7 +58,7 @@ export default function StreamRoom({ stream, initialState, user }) {
     const isOwner = user?.id === stream.owner.id || user?.role === 'ADMIN';
     const isCreator = user?.id === stream.owner.id;
     const leaveEndedStream = useCallback(() => {
-        router.replace(isCreator ? '/dashboard' : '/');
+        router.replace(isCreator ? '/dashboard/statistics' : '/');
     }, [isCreator, router]);
 
     useEffect(() => {

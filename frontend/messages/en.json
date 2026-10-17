@@ -1,5 +1,16 @@
 {
+    "statistics": {
+        "title": "Stream statistics", "refresh": "Refresh", "chooseOwner": "Choose a streamer from users",
+        "all": "All streamers", "owner": "Streamer: {name}", "total": "Total rooms", "active": "Rooms not ended",
+        "donationCount": "Donation count", "donationAmount": "Total donations", "peak": "Peak connections in stream rooms", "average": "Average connections in stream rooms",
+        "noData": "No data yet",
+        "rooms": "Stream rooms", "room": "Room", "streamer": "Streamer", "status": "Status", "created": "Created", "detail": "Details",
+        "empty": "No stream rooms yet.", "error": "Unable to load statistics. Check your connection and access, then try again.",
+        "chart": "Viewer connections over time", "chartNote": "The chart shows up to 120 recent readings from the stream room. The metrics above use all of the room's data.",
+        "emptySamples": "This stream room has no viewer data yet. Play the stream for at least 10 seconds to record data.", "close": "Close"
+    },
     "adminUsers": {
+        "statistics": "Statistics",
         "search": "Search by name or email",
         "searchButton": "Search",
         "refresh": "Refresh",
@@ -30,6 +41,7 @@
         }
     },
     "nav": {
+        "statistics": "Statistics",
         "home": "Home",
         "createStream": "Create Stream",
         "dashboard": "Dashboard",

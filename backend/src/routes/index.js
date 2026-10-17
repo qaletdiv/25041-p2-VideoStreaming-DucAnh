@@ -6,6 +6,7 @@ import categoryRouter from './category.js';
 import uploadsRouter from './uploads.js';
 import streamRouter from './stream.js';
 import adminUserRouter from './adminUser.js';
+import statisticsRouter from './statistics.js';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/categories', categoryRouter);
 router.use('/uploads', uploadsRouter);
 router.use('/streams', streamRouter);
 router.use('/admin/users', adminUserRouter);
+router.use('/statistics', statisticsRouter);
 
 export default router;

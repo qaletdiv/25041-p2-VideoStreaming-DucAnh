@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Alert, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { apiFetch } from '@/lib/api';
+import { Link } from '@/i18n/navigation';
 
 export default function AdminUsers() {
     const t = useTranslations('adminUsers');
@@ -79,7 +80,10 @@ export default function AdminUsers() {
                                 <TableCell>{t(`roles.${user.role}`)}</TableCell>
                                 <TableCell><Chip size="small" color={user.isActive ? 'success' : 'error'} label={t(`statuses.${user.isActive ? 'active' : 'locked'}`)} /></TableCell>
                                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{format.dateTime(new Date(user.createdAt), { dateStyle: 'short' })}</TableCell>
-                                <TableCell>{user.role === 'ADMIN' ? t('protected') : <Button color={user.isActive ? 'error' : 'primary'} onClick={() => { setError(null); setTarget(user); }}>{t(user.isActive ? 'lock' : 'unlock')}</Button>}</TableCell>
+                                <TableCell>
+                                    <Button component={Link} href={{ pathname: '/dashboard/statistics', query: { ownerId: user.id } }}>{t('statistics')}</Button>
+                                    {user.role === 'ADMIN' ? t('protected') : <Button color={user.isActive ? 'error' : 'primary'} onClick={() => { setError(null); setTarget(user); }}>{t(user.isActive ? 'lock' : 'unlock')}</Button>}
+                                </TableCell>
                             </TableRow>)}
                             {!result.users.length && <TableRow><TableCell colSpan={6}>{t('empty')}</TableCell></TableRow>}
                         </TableBody>

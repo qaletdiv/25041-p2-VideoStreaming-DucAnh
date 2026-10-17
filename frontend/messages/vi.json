@@ -1,5 +1,16 @@
 {
+    "statistics": {
+        "title": "Thống kê stream", "refresh": "Tải lại", "chooseOwner": "Chọn streamer từ danh sách người dùng",
+        "all": "Tất cả streamer", "owner": "Streamer: {name}", "total": "Tổng số phòng", "active": "Phòng chưa kết thúc",
+        "donationCount": "Số lượt donate", "donationAmount": "Tổng donate", "peak": "Kết nối cao nhất trong phòng stream", "average": "Kết nối trung bình trong phòng stream",
+        "noData": "Chưa có dữ liệu",
+        "rooms": "Danh sách phòng stream", "room": "Phòng", "streamer": "Streamer", "status": "Trạng thái", "created": "Ngày tạo", "detail": "Chi tiết",
+        "empty": "Chưa có phòng stream.", "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
+        "chart": "Số kết nối xem theo thời gian", "chartNote": "Biểu đồ hiển thị tối đa 120 mốc ghi nhận gần nhất của phòng stream. Các chỉ số phía trên tính từ toàn bộ dữ liệu của phòng.",
+        "emptySamples": "Phòng stream chưa có dữ liệu người xem. Hãy phát stream ít nhất 10 giây để hệ thống ghi nhận.", "close": "Đóng"
+    },
     "adminUsers": {
+        "statistics": "Thống kê",
         "search": "Tìm theo tên hoặc email",
         "searchButton": "Tìm kiếm",
         "refresh": "Tải lại",
@@ -30,6 +41,7 @@
         }
     },
     "nav": {
+        "statistics": "Thống kê",
         "home": "Trang chủ",
         "createStream": "Tạo Stream",
         "dashboard": "Dashboard",
