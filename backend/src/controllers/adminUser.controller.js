@@ -1,5 +1,5 @@
 import * as users from '../services/adminUser.service.js';
-import { controlStream } from '../services/stream.service.js';
+import { controlStream, listUnfinishedStreams } from '../services/stream.service.js';
 import { HttpError } from '../lib/httpError.js';
 
 export async function listUsers(req, res) {
@@ -15,7 +15,7 @@ export async function updateUserStatus(req, res) {
         sockets.disconnectSockets(true);
         // Chạy lại yêu cầu khóa cũng xử lý nốt các phòng chưa kết thúc.
         try {
-            for (const stream of await users.listUnfinishedStreams(user.id)) {
+            for (const stream of await listUnfinishedStreams(user.id)) {
                 const state = await controlStream(stream.id, req.user, { action: 'END' });
                 io.to(`stream:${stream.id}`).emit('stream:state', state);
                 io.emit('stream:ended', { streamId: stream.id });

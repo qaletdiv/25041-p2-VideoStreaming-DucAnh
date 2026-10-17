@@ -2,7 +2,7 @@
 import { useState, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-    Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Typography,
+    Alert, Avatar, Box, Divider, IconButton, ListItemIcon, Menu, MenuItem, Snackbar, Typography,
 } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from '@/i18n/navigation';
@@ -13,13 +13,19 @@ export default function UserMenu({ user }) {
     const router = useRouter();
     const [anchorEl, setAnchorEl] = useState(null);
     const [isPending, startTransition] = useTransition();
+    const [logoutError, setLogoutError] = useState(false);
 
     const handleClose = () => setAnchorEl(null);
 
     const handleLogout = () => {
         handleClose();
+        setLogoutError(false);
         startTransition(async () => {
-            await apiFetch('/auth/logout', { method: 'post' });
+            const result = await apiFetch('/auth/logout', { method: 'post' });
+            if (!result.ok) {
+                setLogoutError(true);
+                return;
+            }
             router.replace('/');
             router.refresh();
         });
@@ -58,6 +64,9 @@ export default function UserMenu({ user }) {
                     {t('logout')}
                 </MenuItem>
             </Menu>
+            <Snackbar open={logoutError} onClose={() => setLogoutError(false)}>
+                <Alert severity="error" onClose={() => setLogoutError(false)}>{t('logoutFailed')}</Alert>
+            </Snackbar>
         </>
     );
 }

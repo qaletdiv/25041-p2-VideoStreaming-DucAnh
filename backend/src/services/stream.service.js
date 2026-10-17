@@ -34,6 +34,10 @@ export async function createStream(user, { title, videoId, requireAuth }) {
     return stream;
 }
 
+export async function listUnfinishedStreams(ownerId) {
+    return prisma.stream.findMany({ where: { ownerId, status: { not: 'ENDED' } }, select: { id: true } });
+}
+
 export async function listStreams() {
     return prisma.stream.findMany({
         where: { status: { not: 'ENDED' }, video: { status: 'READY' } },

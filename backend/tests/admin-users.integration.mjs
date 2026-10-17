@@ -46,7 +46,7 @@ test('Admin users: permissions, search, lock/unlock, sockets and ending all room
                 method, headers: { 'Content-Type': 'application/json', ...(actor ? { cookie: cookies[actor] } : {}) },
                 ...(body ? { body: JSON.stringify(body) } : {}),
             });
-            return { status: response.status, data: await response.json() };
+            return { status: response.status, data: response.status === 204 ? null : await response.json(), cookie: response.headers.get('set-cookie') };
         }
         const statusPath = `/admin/users/${ownerId}/status`;
         const change = (isActive) => request(statusPath, adminId, 'PATCH', { isActive });
@@ -110,6 +110,35 @@ test('Admin users: permissions, search, lock/unlock, sockets and ending all room
         await redis.del(`stream:${streamIds[1]}:control-lock`);
         assert.equal((await change(false)).status, 200);
         assert.equal((await getStreamState(streamIds[1])).status, 'ENDED');
+
+        // Đăng xuất người xem không kết thúc phòng; đăng xuất chủ phòng kết thúc mọi phòng.
+        await change(true);
+        for (const id of streamIds) {
+            await prisma.stream.update({ where: { id }, data: { status: 'CREATED', endedAt: null } });
+            await redis.del(`stream:${id}:state`);
+            await initializeStreamState(id);
+        }
+        assert.equal((await request('/auth/logout', viewerId, 'POST')).status, 204);
+        for (const id of streamIds) assert.equal((await getStreamState(id)).status, 'CREATED');
+        const watching = await openSocket(viewerId);
+        const logoutEnded = [];
+        watching.on('stream:ended', ({ streamId }) => logoutEnded.push(streamId));
+        await redis.set(`stream:${streamIds[0]}:control-lock`, 'test', 'PX', 5000);
+        const failedLogout = await request('/auth/logout', ownerId, 'POST');
+        assert.equal(failedLogout.status, 503);
+        assert.equal(failedLogout.data.error.code, 'LOGOUT_STREAMS_PENDING');
+        assert.equal(failedLogout.cookie, null);
+        await redis.del(`stream:${streamIds[0]}:control-lock`);
+        const logout = await request('/auth/logout', ownerId, 'POST');
+        assert.equal(logout.status, 204);
+        assert.match(logout.cookie, /session=;/);
+        assert.deepEqual(new Set(logoutEnded), new Set(streamIds));
+        for (const id of streamIds) {
+            assert.equal((await getStreamState(id)).status, 'ENDED');
+            assert.equal((await prisma.stream.findUnique({ where: { id } })).status, 'ENDED');
+        }
+        assert.equal((await request('/auth/logout', ownerId, 'POST')).status, 204);
+        assert.equal((await request('/auth/logout', null, 'POST')).status, 204);
     } finally {
         for (const socket of sockets) socket.disconnect();
         await new Promise((resolve) => io.close(resolve));

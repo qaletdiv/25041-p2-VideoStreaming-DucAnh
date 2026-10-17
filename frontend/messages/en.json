@@ -36,6 +36,7 @@
         "users": "User Management"
     },
     "header": {
+        "logoutFailed": "Could not sign out or end all stream rooms. Please try signing out again.",
         "login": "Log in",
         "menu": "Menu",
         "switchLanguage": "Switch language",

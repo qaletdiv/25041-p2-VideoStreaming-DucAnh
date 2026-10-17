@@ -24,6 +24,3 @@ export async function updateUserStatus(id, actor, isActive) {
     return prisma.user.update({ where: { id }, data: { isActive }, select: userSelect });
 }
 
-export async function listUnfinishedStreams(ownerId) {
-    return prisma.stream.findMany({ where: { ownerId, status: { not: 'ENDED' } }, select: { id: true } });
-}
