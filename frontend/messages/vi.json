@@ -1,4 +1,34 @@
 {
+    "adminUsers": {
+        "search": "Tìm theo tên hoặc email",
+        "searchButton": "Tìm kiếm",
+        "refresh": "Tải lại",
+        "name": "Tên",
+        "email": "Email",
+        "role": "Vai trò",
+        "status": "Trạng thái",
+        "createdAt": "Ngày đăng ký",
+        "actions": "Thao tác",
+        "tableLabel": "Danh sách người dùng",
+        "total": "Tổng cộng: {count} tài khoản",
+        "empty": "Không tìm thấy người dùng phù hợp.",
+        "protected": "Tài khoản quản trị",
+        "roles": { "ADMIN": "Admin", "USER": "Người dùng" },
+        "statuses": { "all": "Tất cả", "active": "Hoạt động", "locked": "Đã khóa" },
+        "lock": "Khóa tài khoản",
+        "unlock": "Mở khóa",
+        "confirmLock": "Khóa tài khoản {name}? Người dùng sẽ không thể đăng nhập hay thao tác bằng tài khoản này. Các phòng stream của người dùng sẽ kết thúc.",
+        "confirmUnlock": "Mở khóa tài khoản {name} để người dùng có thể đăng nhập và sử dụng lại? Các phòng đã kết thúc sẽ không mở lại.",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận",
+        "success": { "locked": "Đã khóa tài khoản và kết thúc các phòng stream.", "unlocked": "Đã mở khóa tài khoản." },
+        "errors": {
+            "failed": "Không thể thực hiện thao tác. Vui lòng thử lại.",
+            "forbidden": "Bạn cần đăng nhập bằng tài khoản Admin để xem danh sách này.",
+            "protected": "Không thể khóa tài khoản Admin hoặc chính mình.",
+            "streamsPending": "Tài khoản đã bị khóa, nhưng chưa kết thúc được tất cả phòng stream. Vui lòng bấm Xác nhận lần nữa để thử lại."
+        }
+    },
     "nav": {
         "home": "Trang chủ",
         "createStream": "Tạo Stream",

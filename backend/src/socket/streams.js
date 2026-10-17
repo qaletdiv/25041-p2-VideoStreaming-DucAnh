@@ -36,6 +36,7 @@ export function registerStreamSockets(io) {
             const token = readSessionCookie(socket.handshake.headers.cookie);
             const payload = token ? await verifyToken(token) : null;
             socket.data.user = payload?.sub ? await findActiveUserById(payload.sub) : null;
+            if (payload?.sub && !socket.data.user) return next(new Error('UNAUTHENTICATED'));
             next();
         } catch (error) {
             next(error);
@@ -44,10 +45,18 @@ export function registerStreamSockets(io) {
 
     io.on('connection', (socket) => {
         if (socket.data.user) socket.join(`user:${socket.data.user.id}`);
+        async function checkActiveAccount(ack) {
+            if (!socket.data.user || await findActiveUserById(socket.data.user.id)) return true;
+            ack({ ok: false, code: 'UNAUTHENTICATED' });
+            socket.emit('account:locked');
+            socket.disconnect(true);
+            return false;
+        }
         socket.on('stream:join', async (input, ack) => {
             if (typeof ack !== 'function') return;
 
             try {
+                if (!await checkActiveAccount(ack)) return;
                 const parsed = joinSchema.safeParse(input);
                 if (!parsed.success) return ack({ ok: false, code: 'VALIDATION_ERROR' });
 
@@ -93,6 +102,7 @@ export function registerStreamSockets(io) {
             if (!streamId) return ack({ ok: false, code: 'NOT_IN_STREAM' });
 
             try {
+                if (!await checkActiveAccount(ack)) return;
                 const ban = await getActiveChatBan(streamId, socket.data.user?.id);
                 ack({ ok: true, ...await heartbeatViewer(streamId, socket.id), ban, serverNow: Date.now() });
             } catch (error) {
