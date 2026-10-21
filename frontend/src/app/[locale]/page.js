@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Box, Typography } from '@mui/material';
 import VideoGrid from '@/components/VideoGrid';
+import StreamGrid from '@/components/stream/StreamGrid';
 import { serverApiGet } from '@/lib/api.server';
 
 // Giá trị sắp xếp hợp lệ (giống schema backend)
@@ -27,12 +28,14 @@ export default async function HomePage({ searchParams }) {
     // SSR trang đầu; backend lỗi thì trả null -> grid rỗng, trang không sập
     const { ok, data } = await serverApiGet(`/videos?${query.toString()}`);
     const categoriesResponse = await serverApiGet('/categories');
+    const streamsResponse = await serverApiGet('/streams');
 
     return (
         <Box>
             <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 2 }}>
                 {t('title')}
             </Typography>
+            <StreamGrid initialStreams={streamsResponse.ok ? streamsResponse.data.streams : []} />
             <VideoGrid
                 initialData={ok ? data : { videos: [], total: 0, page, limit: PAGE_SIZE, totalPages: 0 }}
                 categories={categoriesResponse.ok ? categoriesResponse.data.categories : []}

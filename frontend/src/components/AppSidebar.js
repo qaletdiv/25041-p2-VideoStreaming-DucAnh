@@ -7,6 +7,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { useTranslations } from 'next-intl';
 
 const DRAWER_WIDTH = 240;
@@ -15,10 +16,11 @@ const NAV_ITEMS = [
     { key: 'home', href: '/', icon: <HomeIcon /> },
     { key: 'createStream', href: '/stream/create', icon: <LiveTvIcon /> },
     { key: 'dashboard', href: '/dashboard', icon: <DashboardIcon /> },
-    { key: 'users', href: '/admin/users', icon: <PeopleIcon /> },
+    { key: 'statistics', href: '/dashboard/statistics', icon: <BarChartIcon />, authenticated: true },
+    { key: 'users', href: '/admin/users', icon: <PeopleIcon />, role: 'ADMIN' },
 ];
 
-export default function AppSidebar({ mobileOpen, onClose }) {
+export default function AppSidebar({ mobileOpen, onClose, user }) {
     const pathname = usePathname();
     const t = useTranslations('nav');
 
@@ -26,7 +28,7 @@ export default function AppSidebar({ mobileOpen, onClose }) {
         <Box>
             <Toolbar />
             <List>
-                {NAV_ITEMS.map((item) => (
+                {NAV_ITEMS.filter((item) => (!item.role || user?.role === item.role) && (!item.authenticated || user)).map((item) => (
                     <ListItemButton
                         key={item.href}
                         component={Link}

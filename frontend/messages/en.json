@@ -1,11 +1,54 @@
 {
+    "statistics": {
+        "title": "Stream statistics", "refresh": "Refresh", "chooseOwner": "Choose a streamer from users",
+        "all": "All streamers", "owner": "Streamer: {name}", "total": "Total rooms", "active": "Rooms not ended",
+        "donationCount": "Donation count", "donationAmount": "Total donations", "peak": "Peak connections in stream rooms", "average": "Average connections in stream rooms",
+        "noData": "No data yet",
+        "rooms": "Stream rooms", "room": "Room", "streamer": "Streamer", "status": "Status", "created": "Created", "detail": "Details",
+        "empty": "No stream rooms yet.", "error": "Unable to load statistics. Check your connection and access, then try again.",
+        "chart": "Viewer connections over time", "chartNote": "The chart shows up to 120 recent readings from the stream room. The metrics above use all of the room's data.",
+        "emptySamples": "This stream room has no viewer data yet. Play the stream for at least 10 seconds to record data.", "close": "Close"
+    },
+    "adminUsers": {
+        "statistics": "Statistics",
+        "search": "Search by name or email",
+        "searchButton": "Search",
+        "refresh": "Refresh",
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "createdAt": "Registered",
+        "actions": "Actions",
+        "tableLabel": "User list",
+        "total": "Total: {count} accounts",
+        "empty": "No matching users found.",
+        "protected": "Admin account",
+        "roles": { "ADMIN": "Admin", "USER": "User" },
+        "statuses": { "all": "All", "active": "Active", "locked": "Locked" },
+        "lock": "Lock account",
+        "unlock": "Unlock",
+        "confirmLock": "Lock {name}'s account? The user will be unable to sign in or use this account. All of their stream rooms will end.",
+        "confirmUnlock": "Unlock {name}'s account so they can sign in and use it again? Ended rooms will not reopen.",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "success": { "locked": "Account locked and stream rooms ended.", "unlocked": "Account unlocked." },
+        "errors": {
+            "failed": "The action failed. Please try again.",
+            "forbidden": "Sign in as an Admin to view this list.",
+            "protected": "You cannot lock an Admin account or yourself.",
+            "streamsPending": "The account is locked, but some stream rooms could not be ended. Click Confirm again to retry."
+        }
+    },
     "nav": {
+        "statistics": "Statistics",
         "home": "Home",
         "createStream": "Create Stream",
         "dashboard": "Dashboard",
         "users": "User Management"
     },
     "header": {
+        "logoutFailed": "Could not sign out or end all stream rooms. Please try signing out again.",
         "login": "Log in",
         "menu": "Menu",
         "switchLanguage": "Switch language",
@@ -55,6 +98,14 @@
     },
     "home": {
         "title": "Videos",
+        "streams": "Stream rooms",
+        "noStreams": "No stream rooms yet.",
+        "loginRequired": "Sign in to watch",
+        "streamStatus": {
+            "CREATED": "Not started",
+            "PLAYING": "Playing",
+            "PAUSED": "Paused"
+        },
         "searchPlaceholder": "Search videos…",
         "categoryAll": "All categories",
         "sortLabel": "Sort",
@@ -69,5 +120,178 @@
         "previous": "Previous",
         "next": "Next",
         "pageInfo": "Page {current} / {total}"
+    },
+    "upload": {
+        "title": "Upload Video",
+        "dragDrop": "Drag & drop or click to select a video",
+        "maxSize": "Maximum {size}",
+        "videoTitle": "Title",
+        "description": "Description",
+        "category": "Category",
+        "categoryNone": "None",
+        "submit": "Upload Video",
+        "uploading": "Uploading…",
+        "registering": "Preparing video for playback…",
+        "success": "Video is ready to stream! Redirecting to Dashboard…",
+        "errors": {
+            "fileRequired": "Please select a video file",
+            "processingFailed": "Could not prepare the video for playback. Select the file again and retry.",
+            "processingTimeout": "The video is still processing. Submit again to continue checking without uploading the file again.",
+            "fileTooLarge": "File exceeds the maximum size",
+            "fileInvalidType": "Unsupported file format",
+            "titleRequired": "Please enter a title",
+            "titleMax": "Title must be at most 200 characters",
+            "descriptionMax": "Description must be at most 2000 characters",
+            "signatureFailed": "Failed to get upload signature, please try again",
+            "serverError": "Something went wrong, please try again"
+        }
+    },
+    "dashboard": {
+        "title": "My Videos",
+        "uploadVideo": "Upload Video",
+        "noVideos": "You haven't uploaded any videos yet.",
+        "views": "{count, plural, =1 {# view} other {# views}}",
+        "delete": "Delete",
+        "previous": "Previous",
+        "next": "Next",
+        "pageInfo": "Page {current} / {total}",
+        "status": {
+            "PROCESSING": "Processing",
+            "READY": "Ready",
+            "FAILED": "Failed"
+        },
+        "deleteDialog": {
+            "title": "Delete video?",
+            "message": "This video will be permanently deleted from the system and Cloudinary. This action cannot be undone.",
+            "cancel": "Cancel",
+            "confirm": "Delete"
+        }
+    },
+    "streamCreate": {
+        "title": "Create a Stream room",
+        "streamTitle": "Room name",
+        "video": "Video",
+        "chooseVideo": "Choose a video",
+        "requireAuth": "Require sign-in to watch",
+        "submit": "Create room",
+        "creating": "Creating…",
+        "created": "Room created. Room ID: {id}",
+        "openRoom": "Open room",
+        "noReadyVideos": "You have no videos ready to stream.",
+        "errors": {
+            "titleRequired": "Enter a room name",
+            "titleMax": "Room name must be at most 200 characters",
+            "videoRequired": "Choose a video",
+            "videoUnavailable": "This video is unavailable or you cannot use it.",
+            "serverError": "Could not create the room. Please try again."
+        }
+    },
+    "streamRoom": {
+        "notFound": "Stream room not found.",
+        "loginRequired": "Please sign in to watch this stream",
+        "login": "Sign in",
+        "backHome": "Back to home",
+        "owner": "Host: {name}",
+        "viewers": "{count, plural, =1 {# viewer} other {# viewers}}",
+        "mute": "Mute",
+        "unmute": "Unmute",
+        "tapToPlay": "Tap to play",
+        "seek": "Playback position",
+        "play": "Play",
+        "pause": "Pause",
+        "end": "End",
+        "chat": "Live chat",
+        "message": "Message",
+        "send": "Send",
+        "signInToChat": "Sign in to send a message",
+        "status": {
+            "CREATED": "Not started",
+            "PLAYING": "Playing",
+            "PAUSED": "Paused",
+            "ENDED": "Ended"
+        },
+        "errors": {
+            "CONNECTION_ERROR": "Could not connect to the room. Please reload the page.",
+            "VALIDATION_ERROR": "Invalid data.",
+            "STREAM_NOT_FOUND": "This room does not exist or has ended.",
+            "UNAUTHENTICATED": "Sign in to perform this action.",
+            "STATE_UNAVAILABLE": "Room state is temporarily unavailable.",
+            "NOT_IN_STREAM": "You have not joined the room.",
+            "INTERNAL_ERROR": "Something went wrong. Please try again.",
+            "CHAT_RATE_LIMIT": "Please wait before sending another message.",
+            "INVALID_STREAM_ACTION": "Invalid playback action.",
+            "STREAM_BUSY": "The room is processing another action.",
+            "FORBIDDEN": "You cannot control this room."
+        }
+    },
+    "donation": {
+        "title": "Donate",
+        "amount": "Amount (VND)",
+        "amountHint": "Enter a whole number from 1,000 to 1,000,000 VND.",
+        "message": "Message (optional)",
+        "send": "Send donation",
+        "sending": "Sending…",
+        "success": "Donation sent.",
+        "loginRequired": "Sign in to donate",
+        "history": "Room donation history",
+        "historyError": "Could not load donation history.",
+        "empty": "This room has no donations yet.",
+        "received": "{name} donated {amount}",
+        "errors": {
+            "amountInvalid": "Enter a whole number from 1,000 to 1,000,000 VND.",
+            "forbidden": "The host cannot donate to their own room.",
+            "messageTooLong": "The message must be 300 characters or fewer.",
+            "loginRequired": "Please sign in to donate.",
+            "ended": "This stream has ended and cannot receive donations.",
+            "busy": "The room is processing another action. Please try again.",
+            "conflict": "This request was used for another donation. Please reload the page.",
+            "failed": "The donation could not be confirmed. You can retry with the same content."
+        }
+    },
+    "overlay": {
+        "edit": "Edit donation overlay",
+        "hint": "Drag the overlay on the video to move it. Drag its bottom-right corner to resize. Arrow keys also work when the overlay or resize handle is focused. Save to apply.",
+        "move": "Move donation overlay",
+        "resize": "Resize donation overlay",
+        "x": "Horizontal position",
+        "y": "Vertical position",
+        "width": "Width",
+        "height": "Height",
+        "save": "Save",
+        "cancel": "Cancel",
+        "saveError": "Could not save overlay settings. Please try again.",
+        "previewName": "Viewer",
+        "previewMessage": "This is a donation overlay preview."
+    },
+    "moderation": {
+        "manage": "Manage chat bans",
+        "banUser": "Ban from chat: {name}",
+        "duration": "Ban duration",
+        "minutes": "{count} minutes",
+        "permanent": "Permanent",
+        "reason": "Reason (optional)",
+        "reasonLabel": "Reason",
+        "ban": "Ban from chat",
+        "unban": "Unban",
+        "close": "Close",
+        "activeBans": "Active chat bans",
+        "empty": "No active chat bans.",
+        "until": "Until {time}",
+        "bannedUntil": "You are banned from this room's chat until {time}.",
+        "bannedPermanent": "You are permanently banned from this room's chat.",
+        "errors": {
+            "invalid": "Choose 5, 15, 30 minutes or permanent. The reason must be 200 characters or fewer.",
+            "protected": "You cannot ban the host, an admin or yourself.",
+            "failed": "The action failed. Please try again."
+        }
+    },
+    "watch": {
+        "notFound": "Video not found.",
+        "backHome": "Back to home",
+        "views": "{count, plural, =1 {# view} other {# views}}",
+        "durationMinutes": "{count} min",
+        "durationSeconds": "{count} sec",
+        "uploadedBy": "Uploaded by",
+        "description": "Description"
     }
 }

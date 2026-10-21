@@ -23,6 +23,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   videos       Video[]
+  streams      Stream[]
+  donations    Donation[]
+  chatBans     StreamChatBan[] @relation("BannedUser")
+  issuedChatBans StreamChatBan[] @relation("BanModerator")
 }
 
 model Category {
@@ -56,10 +60,92 @@ model Video {
   uploaderId String
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId String?
+  streams    Stream[]
 
   // Chỉ mục cho các truy vấn thường dùng; KHÔNG đánh chỉ mục status (ít giá trị khác nhau)
   @@index([uploaderId])
   @@index([categoryId])
   @@index([createdAt])
   @@index([viewCount])
+}
+
+enum StreamStatus {
+  CREATED
+  PLAYING
+  PAUSED
+  ENDED
+}
+
+model Stream {
+  id             String       @id @default(cuid())
+  title          String
+  status         StreamStatus @default(CREATED)
+  requireAuth    Boolean      @default(false)
+  donationOverlay Json        @default("{\"x\":20,\"y\":5,\"width\":60,\"height\":30}")
+  positionMs     Int          @default(0)
+  stateChangedAt DateTime?
+  startedAt      DateTime?
+  endedAt        DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  owner          User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId        String
+  video          Video        @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  videoId        String
+  samples        StreamSample[]
+  donations      Donation[]
+  chatBans       StreamChatBan[]
+
+  @@index([ownerId, createdAt])
+  @@index([videoId])
+  @@index([status, createdAt])
+}
+
+model StreamSample {
+  id         String   @id @default(cuid())
+  ts         DateTime @default(now())
+  viewers    Int
+  positionMs Int
+
+  stream     Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId   String
+
+  @@unique([streamId, ts])
+  @@index([streamId, ts])
+}
+
+model Donation {
+  id        String   @id @default(cuid())
+  amount    Int
+  message   String   @default("")
+  requestId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  stream    Stream   @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId  String
+
+  @@unique([userId, requestId])
+  @@index([streamId, createdAt])
+}
+
+model StreamChatBan {
+  id          String   @id @default(cuid())
+  expiresAt   DateTime?
+  reason      String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  streamId    String
+  userId      String
+  moderatorId String
+
+  stream      Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user        User   @relation("BannedUser", fields: [userId], references: [id], onDelete: Cascade)
+  moderator   User   @relation("BanModerator", fields: [moderatorId], references: [id], onDelete: Cascade)
+
+  @@unique([streamId, userId])
+  @@index([streamId, expiresAt])
+  @@index([userId])
 }

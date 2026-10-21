@@ -1,14 +1,12 @@
-import { getTranslations } from 'next-intl/server';
-import { Typography } from '@mui/material';
 import { requireUser } from '@/lib/guards';
+import { serverApiGet } from '@/lib/api.server';
+import CreateStreamForm from '@/components/stream/CreateStreamForm';
 
 export default async function CreateStreamPage() {
-    await requireUser();
-    const t = await getTranslations('nav');
+    const user = await requireUser();
+    const path = user.role === 'ADMIN' ? '/videos?limit=100' : '/videos/mine?limit=100';
+    const { ok, data } = await serverApiGet(path);
+    const videos = ok ? data.videos.filter((video) => video.status === 'READY' || user.role === 'ADMIN') : [];
 
-    return (
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 700 }}>
-            {t('createStream')}
-        </Typography>
-    );
+    return <CreateStreamForm videos={videos} />;
 }

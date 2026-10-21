@@ -10,7 +10,7 @@ export default function AppShell({ children, user }) {
   return (
     <Box sx={{ display: 'flex' }}>
       <AppHeader user={user} onMenuClick={() => setMobileOpen(true)} />
-      <AppSidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <AppSidebar user={user} mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
       <Box component="main" sx={{ flexGrow: 1, minWidth: 0, p: 3 }}>
         <Toolbar />
         {children}
