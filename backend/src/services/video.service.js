@@ -209,15 +209,3 @@ export async function getPublicVideo(id) {
     if (!video) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
     return video;
 }
-
-// Tăng lượt xem nguyên tử: 1 UPDATE duy nhất, không đọc-modify-ghi
-export async function incrementViews(videoId) {
-    const result = await prisma.video.updateMany({
-        where: { id: videoId, status: 'READY' },
-        data: { viewCount: { increment: 1 } },
-    });
-    if (result.count === 0) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
-
-    const video = await prisma.video.findUnique({ where: { id: videoId }, select: { viewCount: true } });
-    return video;
-}

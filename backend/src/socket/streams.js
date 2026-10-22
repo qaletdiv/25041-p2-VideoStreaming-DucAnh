@@ -47,6 +47,7 @@ export function registerStreamSockets(io) {
 
     io.on('connection', (socket) => {
         if (socket.data.user) socket.join(`user:${socket.data.user.id}`);
+        if (socket.data.user?.role === 'ADMIN') socket.join('statistics:admins');
         async function checkActiveAccount(ack) {
             if (!socket.data.user || await findActiveUserById(socket.data.user.id)) return true;
             ack({ ok: false, code: 'UNAUTHENTICATED' });

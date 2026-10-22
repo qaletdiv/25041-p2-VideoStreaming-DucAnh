@@ -1,4 +1,5 @@
 import * as videoService from '../services/video.service.js';
+import { recordVideoView } from '../services/videoView.service.js';
 
 export async function listVideos(req, res) {
     const result = await videoService.listVideos(req.validatedQuery);
@@ -30,6 +31,10 @@ export async function getVideo(req, res) {
 }
 
 export async function incrementViews(req, res) {
-    const { viewCount } = await videoService.incrementViews(req.params.id);
-    res.json({ viewCount });
+    const { counted, viewCount, uploaderId } = await recordVideoView(req.params.id, req.user, req.body);
+    if (counted) {
+        req.app.get('io')?.to(`user:${uploaderId}`).to('statistics:admins')
+            .emit('statistics:videos-changed');
+    }
+    res.json({ counted, viewCount });
 }
