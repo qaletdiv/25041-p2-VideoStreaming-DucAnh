@@ -8,6 +8,7 @@ export async function listVideos(req, res) {
 
 export async function createVideo(req, res) {
     const video = await videoService.createVideo(req.user.id, req.body);
+    req.app.get('io')?.to(`user:${req.user.id}`).to('statistics:admins').emit('statistics:videos-changed');
     res.status(201).json({ video });
 }
 
@@ -21,7 +22,8 @@ export async function getUploadStatus(req, res) {
 }
 
 export async function deleteVideo(req, res) {
-    await videoService.deleteVideo(req.user.id, req.user.role, req.params.id);
+    const video = await videoService.deleteVideo(req.user.id, req.user.role, req.params.id);
+    req.app.get('io')?.to(`user:${video.uploaderId}`).to('statistics:admins').emit('statistics:videos-changed');
     res.status(204).end();
 }
 

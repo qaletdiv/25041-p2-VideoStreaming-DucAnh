@@ -1,4 +1,16 @@
 {
+    "videoStatistics": {
+        "title": "Tổng quan & Phân tích video", "allVideos": "Tất cả video", "myVideos": "Video của bạn", "selectedOwner": "Video của tài khoản đã chọn",
+        "live": "Đang cập nhật trực tiếp", "reconnecting": "Đang kết nối lại", "refresh": "Tải lại", "chooseOwner": "Chọn tài khoản",
+        "range": "Khoảng thời gian", "ranges": { "today": "Hôm nay", "7d": "7 ngày qua", "30d": "30 ngày qua", "custom": "Tùy chỉnh" },
+        "group": "Nhóm biểu đồ", "groups": { "day": "Theo ngày", "week": "Theo tuần", "month": "Theo tháng" },
+        "from": "Từ ngày", "to": "Đến ngày", "apply": "Áp dụng", "invalidDates": "Chọn ngày hợp lệ, ngày bắt đầu không sau ngày kết thúc và tối đa 366 ngày.",
+        "period": "Đang xem: {from} – {to} · Giờ Việt Nam", "loading": "Đang tải dữ liệu…", "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
+        "totalVideos": "Video tải lên trong kỳ", "totalViews": "Lượt xem trong kỳ", "trend": "Xu hướng lượt xem", "top": "Top 10 video được xem nhiều nhất", "noViews": "Chưa có lượt xem trong khoảng thời gian này.",
+        "table": "Phân tích video", "search": "Tìm theo tiêu đề video", "sort": "Sắp xếp theo", "order": "Thứ tự", "asc": "Tăng dần", "desc": "Giảm dần",
+        "columns": { "title": "Video", "duration": "Thời lượng", "views": "Lượt xem trong kỳ", "createdAt": "Ngày tạo" },
+        "empty": "Không có video phù hợp.", "pageSize": "Số dòng mỗi trang", "results": "{count, number} video"
+    },
     "statistics": {
         "title": "Thống kê stream", "refresh": "Tải lại", "chooseOwner": "Chọn streamer từ danh sách người dùng",
         "all": "Tất cả streamer", "owner": "Streamer: {name}", "total": "Tổng số phòng", "active": "Phòng chưa kết thúc",

@@ -1,4 +1,16 @@
 {
+    "videoStatistics": {
+        "title": "Video Overview & Analytics", "allVideos": "All videos", "myVideos": "Your videos", "selectedOwner": "Videos from the selected account",
+        "live": "Live updates", "reconnecting": "Reconnecting", "refresh": "Refresh", "chooseOwner": "Choose account",
+        "range": "Date range", "ranges": { "today": "Today", "7d": "Last 7 days", "30d": "Last 30 days", "custom": "Custom" },
+        "group": "Chart grouping", "groups": { "day": "Daily", "week": "Weekly", "month": "Monthly" },
+        "from": "From", "to": "To", "apply": "Apply", "invalidDates": "Choose valid dates in chronological order, spanning no more than 366 days.",
+        "period": "Showing: {from} – {to} · Vietnam time", "loading": "Loading data…", "error": "Unable to load analytics. Check your connection and access, then try again.",
+        "totalVideos": "Videos uploaded in period", "totalViews": "Views in period", "trend": "View trends", "top": "Top 10 most viewed videos", "noViews": "No views in this date range.",
+        "table": "Video analytics", "search": "Search video titles", "sort": "Sort by", "order": "Order", "asc": "Ascending", "desc": "Descending",
+        "columns": { "title": "Video", "duration": "Duration", "views": "Views in period", "createdAt": "Creation date" },
+        "empty": "No matching videos.", "pageSize": "Rows per page", "results": "{count, number} videos"
+    },
     "statistics": {
         "title": "Stream statistics", "refresh": "Refresh", "chooseOwner": "Choose a streamer from users",
         "all": "All streamers", "owner": "Streamer: {name}", "total": "Total rooms", "active": "Rooms not ended",
