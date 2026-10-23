@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import { authenticate } from '../middleware/authenticate.js';
-import { listVideosSchema, createVideoSchema, listMyVideosSchema, videoIdSchema } from '../validations/video.js';
+import { authenticate, optionalAuthenticate } from '../middleware/authenticate.js';
+import { listVideosSchema, createVideoSchema, listMyVideosSchema, videoIdSchema, videoViewSchema } from '../validations/video.js';
 import * as videoController from '../controllers/video.controller.js';
 
 const router = Router();
@@ -17,6 +17,6 @@ router.delete('/:id', authenticate, videoController.deleteVideo);
 
 // Công khai: xem chi tiết và đếm lượt xem
 router.get('/:id', validate(videoIdSchema, 'params'), videoController.getVideo);
-router.post('/:id/views', validate(videoIdSchema, 'params'), videoController.incrementViews);
+router.post('/:id/views', optionalAuthenticate, validate(videoIdSchema, 'params'), validate(videoViewSchema), videoController.incrementViews);
 
 export default router;

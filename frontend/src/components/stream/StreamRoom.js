@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { Link, useRouter } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
+import { useVideoView } from '@/lib/useVideoView';
 import DonationPanel from '@/components/stream/DonationPanel';
 import DonationOverlay from '@/components/stream/DonationOverlay';
 import OverlaySettings from '@/components/stream/OverlaySettings';
@@ -57,6 +58,8 @@ export default function StreamRoom({ stream, initialState, user }) {
     }, []);
     const isOwner = user?.id === stream.owner.id || user?.role === 'ADMIN';
     const isCreator = user?.id === stream.owner.id;
+    const [joined, setJoined] = useState(false);
+    useVideoView(videoRef, stream.video.id, stream.id, joined && !isCreator);
     const leaveEndedStream = useCallback(() => {
         router.replace(isCreator ? '/dashboard/statistics' : '/');
     }, [isCreator, router]);
@@ -87,6 +90,7 @@ export default function StreamRoom({ stream, initialState, user }) {
         socketRef.current = socket;
 
         socket.on('connect', () => {
+            setJoined(false);
             socket.emit('stream:join', { streamId: stream.id }, (reply) => {
                 if (reply?.code === 'STREAM_ENDED') {
                     leaveEndedStream();
@@ -97,6 +101,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                     return;
                 }
                 setError(null);
+                setJoined(true);
                 setState(receivedState(reply.state));
                 setViewers(reply.viewers);
                 setMessages(reply.messages);
@@ -105,6 +110,7 @@ export default function StreamRoom({ stream, initialState, user }) {
             });
         });
         socket.on('connect_error', () => setError('CONNECTION_ERROR'));
+        socket.on('disconnect', () => setJoined(false));
         socket.on('account:locked', () => {
             router.replace('/login');
             router.refresh();

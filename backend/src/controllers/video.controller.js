@@ -1,4 +1,5 @@
 import * as videoService from '../services/video.service.js';
+import { recordVideoView } from '../services/videoView.service.js';
 
 export async function listVideos(req, res) {
     const result = await videoService.listVideos(req.validatedQuery);
@@ -7,6 +8,7 @@ export async function listVideos(req, res) {
 
 export async function createVideo(req, res) {
     const video = await videoService.createVideo(req.user.id, req.body);
+    req.app.get('io')?.to(`user:${req.user.id}`).to('statistics:admins').emit('statistics:videos-changed');
     res.status(201).json({ video });
 }
 
@@ -20,7 +22,8 @@ export async function getUploadStatus(req, res) {
 }
 
 export async function deleteVideo(req, res) {
-    await videoService.deleteVideo(req.user.id, req.user.role, req.params.id);
+    const video = await videoService.deleteVideo(req.user.id, req.user.role, req.params.id);
+    req.app.get('io')?.to(`user:${video.uploaderId}`).to('statistics:admins').emit('statistics:videos-changed');
     res.status(204).end();
 }
 
@@ -30,6 +33,10 @@ export async function getVideo(req, res) {
 }
 
 export async function incrementViews(req, res) {
-    const { viewCount } = await videoService.incrementViews(req.params.id);
-    res.json({ viewCount });
+    const { counted, viewCount, uploaderId } = await recordVideoView(req.params.id, req.user, req.body);
+    if (counted) {
+        req.app.get('io')?.to(`user:${uploaderId}`).to('statistics:admins')
+            .emit('statistics:videos-changed');
+    }
+    res.json({ counted, viewCount });
 }

@@ -148,14 +148,14 @@ export async function deleteVideo(userId, role, videoId) {
     }
 
     await prisma.video.delete({ where: { id: videoId } });
-    return { id: videoId };
+    return { id: videoId, uploaderId: video.uploaderId };
 }
 
 // Sweeper: chuyển PROCESSING -> READY/FAILED (server.js gọi định kỳ)
-export async function finalizeProcessingVideos() {
+export async function finalizeProcessingVideos(onReady = () => {}) {
     const pending = await prisma.video.findMany({
         where: { status: 'PROCESSING', createdAt: { lt: new Date(Date.now() - 30_000) } },
-        select: { id: true, publicId: true, createdAt: true, duration: true, videoUrl: true },
+        select: { id: true, publicId: true, createdAt: true, duration: true, videoUrl: true, uploaderId: true },
     });
 
     for (const video of pending) {
@@ -170,10 +170,11 @@ export async function finalizeProcessingVideos() {
             if (!resource) {
                 await prisma.video.update({ where: { id: video.id }, data: { status: 'FAILED' } });
             } else if (Number(resource.duration) > 0 && await checkHlsPlayback(video.videoUrl)) {
-                await prisma.video.update({
-                    where: { id: video.id },
+                const updated = await prisma.video.updateMany({
+                    where: { id: video.id, status: 'PROCESSING' },
                     data: { status: 'READY', duration: Math.round(resource.duration) },
                 });
+                if (updated.count) onReady(video.uploaderId);
             }
             // Chưa có duration -> để PROCESSING, duyệt lại sau
         } catch {
@@ -207,17 +208,5 @@ export async function getPublicVideo(id) {
         },
     });
     if (!video) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
-    return video;
-}
-
-// Tăng lượt xem nguyên tử: 1 UPDATE duy nhất, không đọc-modify-ghi
-export async function incrementViews(videoId) {
-    const result = await prisma.video.updateMany({
-        where: { id: videoId, status: 'READY' },
-        data: { viewCount: { increment: 1 } },
-    });
-    if (result.count === 0) throw new HttpError(404, 'VIDEO_NOT_FOUND', 'Video not found');
-
-    const video = await prisma.video.findUnique({ where: { id: videoId }, select: { viewCount: true } });
     return video;
 }

@@ -61,6 +61,7 @@ model Video {
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId String?
   streams    Stream[]
+  views      VideoView[]
 
   // Chỉ mục cho các truy vấn thường dùng; KHÔNG đánh chỉ mục status (ít giá trị khác nhau)
   @@index([uploaderId])
@@ -96,10 +97,26 @@ model Stream {
   samples        StreamSample[]
   donations      Donation[]
   chatBans       StreamChatBan[]
+  views          VideoView[]
 
   @@index([ownerId, createdAt])
   @@index([videoId])
   @@index([status, createdAt])
+}
+
+model VideoView {
+  id        String   @id @default(cuid())
+  sessionId String   @unique
+  viewedAt  DateTime @default(now())
+
+  videoId   String
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  streamId  String?
+  stream    Stream?  @relation(fields: [streamId], references: [id], onDelete: SetNull)
+
+  @@index([videoId, viewedAt])
+  @@index([viewedAt])
 }
 
 model StreamSample {
