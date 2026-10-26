@@ -41,17 +41,18 @@ export async function authenticateUser({ email, password }) {
         throw new HttpError(403, 'ACCOUNT_LOCKED', 'Account is locked');
     }
 
-    return { id: user.id, name: user.name, email: user.email, role: user.role };
+    return { id: user.id, name: user.name, email: user.email, role: user.role, sessionVersion: user.sessionVersion };
 }
 
 // Dùng cho middleware authenticate: tài khoản phải còn tồn tại và chưa bị khóa
-export async function findActiveUserById(id) {
+export async function findActiveUserById(id, sessionVersion) {
     const user = await prisma.user.findUnique({
         where: { id },
-        select: { ...publicUserSelect, isActive: true },
+        select: { ...publicUserSelect, isActive: true, sessionVersion: true },
     });
 
     if (!user || !user.isActive) return null;
+    if (sessionVersion !== undefined && user.sessionVersion !== sessionVersion) return null;
 
     const { isActive, ...publicUser } = user;
     return publicUser;

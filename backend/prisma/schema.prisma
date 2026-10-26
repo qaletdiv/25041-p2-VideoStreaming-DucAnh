@@ -17,6 +17,7 @@ model User {
   name         String
   email        String   @unique
   passwordHash String
+  sessionVersion Int    @default(0)
   avatarUrl    String?
   role         Role     @default(USER)
   isActive     Boolean  @default(true)
