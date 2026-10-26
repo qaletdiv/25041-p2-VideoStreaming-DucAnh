@@ -4,8 +4,9 @@ import { useFormatter, useTranslations } from 'next-intl';
 import { Alert, Box, Button, Chip, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, Pagination, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { apiFetch } from '@/lib/api';
 import { Link } from '@/i18n/navigation';
+import AdminUserForm from './AdminUserForm';
 
-export default function AdminUsers() {
+export default function AdminUsers({ currentUserId }) {
     const t = useTranslations('adminUsers');
     const format = useFormatter();
     const [search, setSearch] = useState('');
@@ -17,6 +18,30 @@ export default function AdminUsers() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [reload, setReload] = useState(0);
+    const [form, setForm] = useState(null);
+    const [roleTarget, setRoleTarget] = useState(null);
+    const [role, setRole] = useState('USER');
+    const [actionError, setActionError] = useState(null);
+
+    function saved(message) {
+        setForm(null);
+        setRoleTarget(null);
+        setSuccess(message);
+        setReload((value) => value + 1);
+    }
+
+    async function changeRole() {
+        setBusy(true);
+        setActionError(null);
+        const response = await apiFetch(`/admin/users/${encodeURIComponent(roleTarget.id)}/role`, { method: 'PATCH', body: { role } });
+        setBusy(false);
+        if (!response.ok) {
+            const code = response.data?.error?.code;
+            setActionError(code === 'LAST_ACTIVE_ADMIN' ? 'lastAdmin' : code === 'USER_PROTECTED' ? 'protected' : response.status === 401 || response.status === 403 ? 'forbidden' : 'failed');
+            return;
+        }
+        saved('roleUpdated');
+    }
 
     useEffect(() => {
         let active = true;
@@ -37,7 +62,7 @@ export default function AdminUsers() {
 
     async function confirm() {
         setBusy(true);
-        setError(null);
+        setActionError(null);
         setSuccess(null);
         const response = await apiFetch(`/admin/users/${encodeURIComponent(target.id)}/status`, {
             method: 'PATCH', body: { isActive: !target.isActive },
@@ -45,7 +70,7 @@ export default function AdminUsers() {
         setBusy(false);
         if (!response.ok) {
             const code = response.data?.error?.code;
-            setError(code === 'USER_PROTECTED' ? 'protected' : code === 'LOCK_STREAMS_PENDING' ? 'streamsPending' : 'failed');
+            setActionError(code === 'USER_PROTECTED' ? 'protected' : code === 'LAST_ACTIVE_ADMIN' ? 'lastAdmin' : code === 'LOCK_STREAMS_PENDING' ? 'streamsPending' : 'failed');
             return;
         }
         setSuccess(response.data.user.isActive ? 'unlocked' : 'locked');
@@ -55,6 +80,7 @@ export default function AdminUsers() {
 
     return (
         <Stack spacing={2}>
+            <Box><Button variant="contained" onClick={() => setForm({ user: null })}>{t('add')}</Button></Box>
             <Stack component="form" direction={{ xs: 'column', sm: 'row' }} spacing={2} onSubmit={(event) => {
                 event.preventDefault();
                 setQuery((previous) => ({ ...previous, search: search.trim(), page: 1 }));
@@ -82,7 +108,9 @@ export default function AdminUsers() {
                                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{format.dateTime(new Date(user.createdAt), { dateStyle: 'short' })}</TableCell>
                                 <TableCell>
                                     <Button component={Link} href={{ pathname: '/dashboard/statistics', query: { ownerId: user.id } }}>{t('statistics')}</Button>
-                                    {user.role === 'ADMIN' ? t('protected') : <Button color={user.isActive ? 'error' : 'primary'} onClick={() => { setError(null); setTarget(user); }}>{t(user.isActive ? 'lock' : 'unlock')}</Button>}
+                                    <Button onClick={() => setForm({ user })}>{t('edit')}</Button>
+                                    <Button disabled={user.id === currentUserId} onClick={() => { setActionError(null); setRole(user.role); setRoleTarget(user); }}>{t('changeRole')}</Button>
+                                    <Button disabled={user.id === currentUserId} color={user.isActive ? 'error' : 'primary'} onClick={() => { setActionError(null); setTarget(user); }}>{t(user.isActive ? 'lock' : 'unlock')}</Button>
                                 </TableCell>
                             </TableRow>)}
                             {!result.users.length && <TableRow><TableCell colSpan={6}>{t('empty')}</TableCell></TableRow>}
@@ -95,11 +123,28 @@ export default function AdminUsers() {
                 <DialogTitle>{t(target?.isActive ? 'lock' : 'unlock')}</DialogTitle>
                 <DialogContent>
                     <Typography>{t(target?.isActive ? 'confirmLock' : 'confirmUnlock', { name: target?.name ?? '' })}</Typography>
-                    {error && <Alert severity="error" sx={{ mt: 2 }}>{t(`errors.${error}`)}</Alert>}
+                    {actionError && <Alert severity="error" sx={{ mt: 2 }}>{t(`errors.${actionError}`)}</Alert>}
                 </DialogContent>
                 <DialogActions>
                     <Button disabled={busy} onClick={() => setTarget(null)}>{t('cancel')}</Button>
                     <Button disabled={busy} color={target?.isActive ? 'error' : 'primary'} onClick={confirm}>{t('confirm')}</Button>
+                </DialogActions>
+            </Dialog>
+            {form && <AdminUserForm user={form.user} onClose={() => setForm(null)} onSaved={saved} />}
+            <Dialog open={Boolean(roleTarget)} onClose={() => { if (!busy) setRoleTarget(null); }} fullWidth maxWidth="sm">
+                <DialogTitle>{t('changeRole')}</DialogTitle>
+                <DialogContent>
+                    <Stack spacing={2} sx={{ pt: 1 }}>
+                        <Typography>{t('roleHint', { name: roleTarget?.name ?? '' })}</Typography>
+                        {actionError && <Alert severity="error">{t(`errors.${actionError}`)}</Alert>}
+                        <TextField select label={t('role')} value={role} disabled={busy} onChange={(event) => setRole(event.target.value)}>
+                            {['USER', 'ADMIN'].map((value) => <MenuItem key={value} value={value}>{t(`roles.${value}`)}</MenuItem>)}
+                        </TextField>
+                    </Stack>
+                </DialogContent>
+                <DialogActions>
+                    <Button disabled={busy} onClick={() => setRoleTarget(null)}>{t('cancel')}</Button>
+                    <Button disabled={busy || role === roleTarget?.role} onClick={changeRole}>{t('confirm')}</Button>
                 </DialogActions>
             </Dialog>
         </Stack>

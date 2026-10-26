@@ -37,7 +37,8 @@ export function registerStreamSockets(io) {
         try {
             const token = readSessionCookie(socket.handshake.headers.cookie);
             const payload = token ? await verifyToken(token) : null;
-            socket.data.user = payload?.sub ? await findActiveUserById(payload.sub) : null;
+            socket.data.sessionVersion = payload?.sessionVersion ?? 0;
+            socket.data.user = payload?.sub ? await findActiveUserById(payload.sub, socket.data.sessionVersion) : null;
             if (payload?.sub && !socket.data.user) return next(new Error('UNAUTHENTICATED'));
             next();
         } catch (error) {
@@ -49,7 +50,14 @@ export function registerStreamSockets(io) {
         if (socket.data.user) socket.join(`user:${socket.data.user.id}`);
         if (socket.data.user?.role === 'ADMIN') socket.join('statistics:admins');
         async function checkActiveAccount(ack) {
-            if (!socket.data.user || await findActiveUserById(socket.data.user.id)) return true;
+            if (!socket.data.user) return true;
+            const current = await findActiveUserById(socket.data.user.id, socket.data.sessionVersion);
+            if (current) {
+                socket.data.user = current;
+                if (current.role === 'ADMIN') socket.join('statistics:admins');
+                else socket.leave('statistics:admins');
+                return true;
+            }
             ack({ ok: false, code: 'UNAUTHENTICATED' });
             socket.emit('account:locked');
             socket.disconnect(true);
@@ -127,7 +135,7 @@ export function registerStreamSockets(io) {
                 if (!parsed.success) return ack({ ok: false, code: 'VALIDATION_ERROR' });
 
                 const user = socket.data.user
-                    ? await findActiveUserById(socket.data.user.id)
+                    ? await findActiveUserById(socket.data.user.id, socket.data.sessionVersion)
                     : null;
                 if (!user) return ack({ ok: false, code: 'UNAUTHENTICATED' });
 

@@ -6,7 +6,7 @@ import { findActiveUserById } from '../services/auth.service.js';
 export async function authenticate(req, res, next) {
     const token = req.cookies[SESSION_COOKIE];
     const payload = token ? await verifyToken(token) : null;
-    const user = payload?.sub ? await findActiveUserById(payload.sub) : null;
+    const user = payload?.sub ? await findActiveUserById(payload.sub, payload.sessionVersion ?? 0) : null;
 
     if (!user) {
         throw new HttpError(401, 'UNAUTHENTICATED', 'Authentication required');
@@ -20,7 +20,7 @@ export async function authenticate(req, res, next) {
 export async function optionalAuthenticate(req, res, next) {
     const token = req.cookies[SESSION_COOKIE];
     const payload = token ? await verifyToken(token) : null;
-    req.user = payload?.sub ? await findActiveUserById(payload.sub) : null;
+    req.user = payload?.sub ? await findActiveUserById(payload.sub, payload.sessionVersion ?? 0) : null;
     next();
 }
 
