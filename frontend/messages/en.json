@@ -36,20 +36,52 @@
         "total": "Total: {count} accounts",
         "empty": "No matching users found.",
         "protected": "Admin account",
-        "roles": { "ADMIN": "Admin", "USER": "User" },
-        "statuses": { "all": "All", "active": "Active", "locked": "Locked" },
+        "roles": {
+            "ADMIN": "Admin",
+            "USER": "User"
+        },
+        "statuses": {
+            "all": "All",
+            "active": "Active",
+            "locked": "Locked"
+        },
         "lock": "Lock account",
         "unlock": "Unlock",
         "confirmLock": "Lock {name}'s account? The user will be unable to sign in or use this account. All of their stream rooms will end.",
         "confirmUnlock": "Unlock {name}'s account so they can sign in and use it again? Ended rooms will not reopen.",
         "cancel": "Cancel",
         "confirm": "Confirm",
-        "success": { "locked": "Account locked and stream rooms ended.", "unlocked": "Account unlocked." },
+        "success": {
+            "locked": "Account locked and stream rooms ended.",
+            "unlocked": "Account unlocked.",
+            "created": "Account created.",
+            "updated": "Account updated.",
+            "roleUpdated": "Role updated."
+        },
         "errors": {
             "failed": "The action failed. Please try again.",
             "forbidden": "Sign in as an Admin to view this list.",
-            "protected": "You cannot lock an Admin account or yourself.",
-            "streamsPending": "The account is locked, but some stream rooms could not be ended. Click Confirm again to retry."
+            "protected": "You cannot lock or demote your own account.",
+            "streamsPending": "The account is locked, but some stream rooms could not be ended. Click Confirm again to retry.",
+            "lastAdmin": "At least one active Admin must remain.",
+            "emailTaken": "This email is already in use.",
+            "invalid": "Invalid input."
+        },
+        "add": "Add account",
+        "edit": "Edit profile",
+        "changeRole": "Change role",
+        "password": "Password",
+        "newPassword": "New password",
+        "passwordHint": "Leave blank to keep the current password. Setting a new password revokes existing sessions.",
+        "save": "Save",
+        "roleHint": "Change the role of {name}. New permissions take effect immediately.",
+        "validation": {
+            "nameMin": "Name must contain at least 2 characters.",
+            "nameMax": "Name must not exceed 50 characters.",
+            "emailInvalid": "Enter a valid email address.",
+            "emailTaken": "This email is already in use.",
+            "passwordMin": "Password must contain at least 8 characters.",
+            "passwordMax": "Password must not exceed 72 UTF-8 bytes (some characters use multiple bytes)."
         }
     },
     "nav": {

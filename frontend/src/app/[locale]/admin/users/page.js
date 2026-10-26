@@ -4,7 +4,7 @@ import { requireRole } from '@/lib/guards';
 import AdminUsers from '@/components/admin/AdminUsers';
 
 export default async function AdminUsersPage() {
-    await requireRole('ADMIN');
+    const user = await requireRole('ADMIN');
     const t = await getTranslations('nav');
 
     return (
@@ -12,7 +12,7 @@ export default async function AdminUsersPage() {
             <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 3 }}>
                 {t('users')}
             </Typography>
-            <AdminUsers />
+            <AdminUsers currentUserId={user.id} />
         </>
     );
 }
