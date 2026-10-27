@@ -1,4 +1,16 @@
 {
+    "videoStatistics": {
+        "title": "Tổng quan & Phân tích video", "allVideos": "Tất cả video", "myVideos": "Video của bạn", "selectedOwner": "Video của tài khoản đã chọn",
+        "live": "Đang cập nhật trực tiếp", "reconnecting": "Đang kết nối lại", "refresh": "Tải lại", "chooseOwner": "Chọn tài khoản",
+        "range": "Khoảng thời gian", "ranges": { "today": "Hôm nay", "7d": "7 ngày qua", "30d": "30 ngày qua", "custom": "Tùy chỉnh" },
+        "group": "Nhóm biểu đồ", "groups": { "day": "Theo ngày", "week": "Theo tuần", "month": "Theo tháng" },
+        "from": "Từ ngày", "to": "Đến ngày", "apply": "Áp dụng", "invalidDates": "Chọn ngày hợp lệ, ngày bắt đầu không sau ngày kết thúc và tối đa 366 ngày.",
+        "period": "Đang xem: {from} – {to} · Giờ Việt Nam", "loading": "Đang tải dữ liệu…", "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
+        "totalVideos": "Video tải lên trong kỳ", "totalViews": "Lượt xem trong kỳ", "trend": "Xu hướng lượt xem", "top": "Top 10 video được xem nhiều nhất", "noViews": "Chưa có lượt xem trong khoảng thời gian này.",
+        "table": "Phân tích video", "search": "Tìm theo tiêu đề video", "sort": "Sắp xếp theo", "order": "Thứ tự", "asc": "Tăng dần", "desc": "Giảm dần",
+        "columns": { "title": "Video", "duration": "Thời lượng", "views": "Lượt xem trong kỳ", "createdAt": "Ngày tạo" },
+        "empty": "Không có video phù hợp.", "pageSize": "Số dòng mỗi trang", "results": "{count, number} video"
+    },
     "statistics": {
         "title": "Thống kê stream", "refresh": "Tải lại", "chooseOwner": "Chọn streamer từ danh sách người dùng",
         "all": "Tất cả streamer", "owner": "Streamer: {name}", "total": "Tổng số phòng", "active": "Phòng chưa kết thúc",
@@ -24,20 +36,52 @@
         "total": "Tổng cộng: {count} tài khoản",
         "empty": "Không tìm thấy người dùng phù hợp.",
         "protected": "Tài khoản quản trị",
-        "roles": { "ADMIN": "Admin", "USER": "Người dùng" },
-        "statuses": { "all": "Tất cả", "active": "Hoạt động", "locked": "Đã khóa" },
+        "roles": {
+            "ADMIN": "Admin",
+            "USER": "Người dùng"
+        },
+        "statuses": {
+            "all": "Tất cả",
+            "active": "Hoạt động",
+            "locked": "Đã khóa"
+        },
         "lock": "Khóa tài khoản",
         "unlock": "Mở khóa",
         "confirmLock": "Khóa tài khoản {name}? Người dùng sẽ không thể đăng nhập hay thao tác bằng tài khoản này. Các phòng stream của người dùng sẽ kết thúc.",
         "confirmUnlock": "Mở khóa tài khoản {name} để người dùng có thể đăng nhập và sử dụng lại? Các phòng đã kết thúc sẽ không mở lại.",
         "cancel": "Hủy",
         "confirm": "Xác nhận",
-        "success": { "locked": "Đã khóa tài khoản và kết thúc các phòng stream.", "unlocked": "Đã mở khóa tài khoản." },
+        "success": {
+            "locked": "Đã khóa tài khoản và kết thúc các phòng stream.",
+            "unlocked": "Đã mở khóa tài khoản.",
+            "created": "Đã tạo tài khoản.",
+            "updated": "Đã cập nhật thông tin tài khoản.",
+            "roleUpdated": "Đã cập nhật vai trò."
+        },
         "errors": {
             "failed": "Không thể thực hiện thao tác. Vui lòng thử lại.",
             "forbidden": "Bạn cần đăng nhập bằng tài khoản Admin để xem danh sách này.",
-            "protected": "Không thể khóa tài khoản Admin hoặc chính mình.",
-            "streamsPending": "Tài khoản đã bị khóa, nhưng chưa kết thúc được tất cả phòng stream. Vui lòng bấm Xác nhận lần nữa để thử lại."
+            "protected": "Bạn không thể tự khóa hoặc tự hạ quyền tài khoản của mình.",
+            "streamsPending": "Tài khoản đã bị khóa, nhưng chưa kết thúc được tất cả phòng stream. Vui lòng bấm Xác nhận lần nữa để thử lại.",
+            "lastAdmin": "Hệ thống phải có ít nhất một Admin đang hoạt động.",
+            "emailTaken": "Email này đã được sử dụng.",
+            "invalid": "Thông tin không hợp lệ."
+        },
+        "add": "Thêm tài khoản",
+        "edit": "Sửa thông tin",
+        "changeRole": "Đổi vai trò",
+        "password": "Mật khẩu",
+        "newPassword": "Mật khẩu mới",
+        "passwordHint": "Để trống để giữ mật khẩu hiện tại. Đặt mật khẩu mới sẽ thu hồi các phiên đăng nhập cũ.",
+        "save": "Lưu",
+        "roleHint": "Thay đổi vai trò của {name}. Quyền mới có hiệu lực ngay.",
+        "validation": {
+            "nameMin": "Họ tên cần ít nhất 2 ký tự.",
+            "nameMax": "Họ tên không quá 50 ký tự.",
+            "emailInvalid": "Email không hợp lệ.",
+            "emailTaken": "Email này đã được sử dụng.",
+            "passwordMin": "Mật khẩu cần ít nhất 8 ký tự.",
+            "passwordMax": "Mật khẩu không quá 72 byte UTF-8 (ký tự có dấu có thể chiếm nhiều byte)."
         }
     },
     "nav": {

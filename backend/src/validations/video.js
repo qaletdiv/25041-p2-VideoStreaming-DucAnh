@@ -27,3 +27,8 @@ export const listMyVideosSchema = z.object({
 export const videoIdSchema = z.object({
     id: z.string().min(1).max(100),
 });
+
+export const videoViewSchema = z.object({
+    sessionId: z.string().uuid(),
+    streamId: z.string().min(1).max(100).optional(),
+}).strict();

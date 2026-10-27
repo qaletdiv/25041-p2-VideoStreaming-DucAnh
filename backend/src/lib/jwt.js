@@ -6,8 +6,8 @@ const ALGORITHM = 'HS256';
 
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7; // 7 ngày
 
-export async function signToken({ userId, role }) {
-    return new SignJWT({ role })
+export async function signToken({ userId, role, sessionVersion = 0 }) {
+    return new SignJWT({ role, sessionVersion })
         .setProtectedHeader({ alg: ALGORITHM })
         .setSubject(userId)
         .setIssuedAt()

@@ -24,7 +24,9 @@ const stopStreamSockets = registerStreamSockets(io);
 
 // Định kỳ chuyển video PROCESSING -> READY/FAILED (unref để không giữ process)
 const sweeper = setInterval(() => {
-    finalizeProcessingVideos().catch((error) => console.error('Sweeper video:', error.message));
+    finalizeProcessingVideos((uploaderId) => {
+        io.to(`user:${uploaderId}`).to('statistics:admins').emit('statistics:videos-changed');
+    }).catch((error) => console.error('Sweeper video:', error.message));
 }, 60_000);
 sweeper.unref();
 

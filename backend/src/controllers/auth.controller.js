@@ -10,8 +10,8 @@ export async function register(req, res) {
 }
 
 export async function login(req, res) {
-    const user = await authService.authenticateUser(req.body);
-    const token = await signToken({ userId: user.id, role: user.role });
+    const { sessionVersion, ...user } = await authService.authenticateUser(req.body);
+    const token = await signToken({ userId: user.id, role: user.role, sessionVersion });
 
     setSessionCookie(res, token);
     res.json({ user });
@@ -39,5 +39,6 @@ export async function logout(req, res) {
 }
 
 export function me(req, res) {
-    res.json({ user: req.user });
+    const { sessionVersion, ...user } = req.user;
+    res.json({ user });
 }
