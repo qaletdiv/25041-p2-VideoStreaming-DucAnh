@@ -20,6 +20,7 @@ export async function listVideos({ q, category, sort = 'newest', page = 1, limit
         where.OR = [
             { title: { contains: q, mode: 'insensitive' } },
             { description: { contains: q, mode: 'insensitive' } },
+            { uploader: { name: { contains: q, mode: 'insensitive' } } },
         ];
     }
 

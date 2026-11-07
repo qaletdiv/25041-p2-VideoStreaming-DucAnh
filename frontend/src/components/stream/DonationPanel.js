@@ -1,13 +1,15 @@
 'use client';
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Alert, Button, Card, CardContent, Stack, TextField, Typography } from '@mui/material';
 import { Link } from '@/i18n/navigation';
 import { apiFetch } from '@/lib/api';
 import { donationSchema } from '@/lib/validations/donation';
 
-export default function DonationPanel({ streamId, user }) {
+export default function DonationPanel({ streamId, user, chatBan }) {
     const t = useTranslations('donation');
+    const moderationText = useTranslations('moderation');
+    const format = useFormatter();
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
     const [pending, startTransition] = useTransition();
@@ -40,7 +42,7 @@ export default function DonationPanel({ streamId, user }) {
         startTransition(async () => {
             const result = await apiFetch(`/streams/${streamId}/donations`, { method: 'POST', body });
             if (!result.ok) {
-                const codes = { UNAUTHENTICATED: 'loginRequired', FORBIDDEN: 'forbidden', STREAM_ENDED: 'ended', STREAM_BUSY: 'busy', DONATION_CONFLICT: 'conflict' };
+                const codes = { UNAUTHENTICATED: 'loginRequired', FORBIDDEN: 'forbidden', CHAT_BANNED: 'chatBanned', STREAM_ACCESS_BANNED: 'chatBanned', STREAM_ENDED: 'ended', STREAM_BUSY: 'busy', DONATION_CONFLICT: 'conflict' };
                 setError(codes[result.data?.error?.code] ?? 'failed');
                 return;
             }
@@ -57,11 +59,13 @@ export default function DonationPanel({ streamId, user }) {
                     <Typography variant="h6">{t('title')}</Typography>
                     {user ? (
                         <Stack component="form" onSubmit={submit} spacing={2} noValidate>
-                            <TextField name="amount" type="number" label={t('amount')} defaultValue="10000" required disabled={pending} slotProps={{ htmlInput: { min: 1000, max: 1000000, step: 1000 } }} helperText={t('amountHint')} />
-                            <TextField name="message" label={t('message')} multiline maxRows={3} disabled={pending} slotProps={{ htmlInput: { maxLength: 300 } }} />
-                            {error && <Alert severity="error">{t(`errors.${error}`)}</Alert>}
+                            {chatBan && <Alert severity="warning">{chatBan.expiresAt ? moderationText('bannedUntil', { time: format.dateTime(new Date(chatBan.expiresAt), { dateStyle: 'short', timeStyle: 'short' }) }) : moderationText('bannedPermanent')}</Alert>}
+                            <TextField name="amount" type="number" label={t('amount')} defaultValue="10000" required disabled={pending || Boolean(chatBan)} slotProps={{ htmlInput: { min: 1000, max: 1000000, step: 1000 } }} helperText={t('amountHint')} />
+                            <TextField name="message" label={t('message')} multiline maxRows={3} disabled={pending || Boolean(chatBan)} slotProps={{ htmlInput: { maxLength: 300 } }} />
+                            {error && error !== 'chatBanned' && <Alert severity="error">{t(`errors.${error}`)}</Alert>}
                             {success && <Alert severity="success">{t('success')}</Alert>}
-                            <Button variant="contained" type="submit" disabled={pending}>{t(pending ? 'sending' : 'send')}</Button>
+                            {error === 'chatBanned' && <Alert severity="error">{moderationText('cannotDonate')}</Alert>}
+                            <Button variant="contained" type="submit" disabled={pending || Boolean(chatBan)}>{t(pending ? 'sending' : 'send')}</Button>
                         </Stack>
                     ) : <Typography><Link href="/login">{t('loginRequired')}</Link></Typography>}
                 </Stack>

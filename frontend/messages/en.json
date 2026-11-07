@@ -1,25 +1,79 @@
 {
     "videoStatistics": {
-        "title": "Video Overview & Analytics", "allVideos": "All videos", "myVideos": "Your videos", "selectedOwner": "Videos from the selected account",
-        "live": "Live updates", "reconnecting": "Reconnecting", "refresh": "Refresh", "chooseOwner": "Choose account",
-        "range": "Date range", "ranges": { "today": "Today", "7d": "Last 7 days", "30d": "Last 30 days", "custom": "Custom" },
-        "group": "Chart grouping", "groups": { "day": "Daily", "week": "Weekly", "month": "Monthly" },
-        "from": "From", "to": "To", "apply": "Apply", "invalidDates": "Choose valid dates in chronological order, spanning no more than 366 days.",
-        "period": "Showing: {from} – {to} · Vietnam time", "loading": "Loading data…", "error": "Unable to load analytics. Check your connection and access, then try again.",
-        "totalVideos": "Videos uploaded in period", "totalViews": "Views in period", "trend": "View trends", "top": "Top 10 most viewed videos", "noViews": "No views in this date range.",
-        "table": "Video analytics", "search": "Search video titles", "sort": "Sort by", "order": "Order", "asc": "Ascending", "desc": "Descending",
-        "columns": { "title": "Video", "duration": "Duration", "views": "Views in period", "createdAt": "Creation date" },
-        "empty": "No matching videos.", "pageSize": "Rows per page", "results": "{count, number} videos"
+        "title": "Video Overview & Analytics",
+        "allVideos": "All videos",
+        "myVideos": "Your videos",
+        "selectedOwner": "Videos from the selected account",
+        "live": "Live updates",
+        "reconnecting": "Reconnecting",
+        "refresh": "Refresh",
+        "chooseOwner": "Choose account",
+        "range": "Date range",
+        "ranges": {
+            "today": "Today",
+            "7d": "Last 7 days",
+            "30d": "Last 30 days",
+            "custom": "Custom"
+        },
+        "group": "Chart grouping",
+        "groups": {
+            "day": "Daily",
+            "week": "Weekly",
+            "month": "Monthly"
+        },
+        "from": "From",
+        "to": "To",
+        "apply": "Apply",
+        "invalidDates": "Choose valid dates in chronological order, spanning no more than 366 days.",
+        "period": "Showing: {from} – {to} · Vietnam time",
+        "loading": "Loading data…",
+        "error": "Unable to load analytics. Check your connection and access, then try again.",
+        "totalVideos": "Videos uploaded in period",
+        "totalViews": "Views in period",
+        "trend": "View trends",
+        "top": "Top 10 most viewed videos",
+        "noViews": "No views in this date range.",
+        "table": "Video analytics",
+        "search": "Search video titles",
+        "sort": "Sort by",
+        "order": "Order",
+        "asc": "Ascending",
+        "desc": "Descending",
+        "columns": {
+            "title": "Video",
+            "duration": "Duration",
+            "views": "Views in period",
+            "createdAt": "Creation date"
+        },
+        "empty": "No matching videos.",
+        "pageSize": "Rows per page",
+        "results": "{count, number} videos"
     },
     "statistics": {
-        "title": "Stream statistics", "refresh": "Refresh", "chooseOwner": "Choose a streamer from users",
-        "all": "All streamers", "owner": "Streamer: {name}", "total": "Total rooms", "active": "Rooms not ended",
-        "donationCount": "Donation count", "donationAmount": "Total donations", "peak": "Peak connections in stream rooms", "average": "Average connections in stream rooms",
+        "title": "Stream statistics",
+        "refresh": "Refresh",
+        "chooseOwner": "Choose a streamer from users",
+        "all": "All streamers",
+        "owner": "Streamer: {name}",
+        "total": "Total rooms",
+        "active": "Rooms not ended",
+        "donationCount": "Donation count",
+        "donationAmount": "Total donations",
+        "peak": "Peak connections in stream rooms",
+        "average": "Average connections in stream rooms",
         "noData": "No data yet",
-        "rooms": "Stream rooms", "room": "Room", "streamer": "Streamer", "status": "Status", "created": "Created", "detail": "Details",
-        "empty": "No stream rooms yet.", "error": "Unable to load statistics. Check your connection and access, then try again.",
-        "chart": "Viewer connections over time", "chartNote": "The chart shows up to 120 recent readings from the stream room. The metrics above use all of the room's data.",
-        "emptySamples": "This stream room has no viewer data yet. Play the stream for at least 10 seconds to record data.", "close": "Close"
+        "rooms": "Stream rooms",
+        "room": "Room",
+        "streamer": "Streamer",
+        "status": "Status",
+        "created": "Created",
+        "detail": "Details",
+        "empty": "No stream rooms yet.",
+        "error": "Unable to load statistics. Check your connection and access, then try again.",
+        "chart": "Viewer connections over time",
+        "chartNote": "The chart shows up to 120 recent readings from the stream room. The metrics above use all of the room's data.",
+        "emptySamples": "This stream room has no viewer data yet. Play the stream for at least 10 seconds to record data.",
+        "close": "Close"
     },
     "adminUsers": {
         "statistics": "Statistics",
@@ -163,7 +217,9 @@
         "noVideos": "No videos match your filters.",
         "previous": "Previous",
         "next": "Next",
-        "pageInfo": "Page {current} / {total}"
+        "pageInfo": "Page {current} / {total}",
+        "loadMoreStreams": "Load more streams",
+        "loadingStreams": "Loading..."
     },
     "upload": {
         "title": "Upload Video",
@@ -227,8 +283,11 @@
             "titleMax": "Room name must be at most 200 characters",
             "videoRequired": "Choose a video",
             "videoUnavailable": "This video is unavailable or you cannot use it.",
-            "serverError": "Could not create the room. Please try again."
-        }
+            "serverError": "Could not create the room. Please try again.",
+            "coverTooLarge": "Choose a JPG, PNG or WebP image up to 5 MB."
+        },
+        "coverImage": "Upload Stream cover (JPG, PNG, WebP, up to 5 MB)",
+        "coverUploading": "Uploading cover: {progress}%"
     },
     "streamRoom": {
         "notFound": "Stream room not found.",
@@ -266,7 +325,13 @@
             "INVALID_STREAM_ACTION": "Invalid playback action.",
             "STREAM_BUSY": "The room is processing another action.",
             "FORBIDDEN": "You cannot control this room."
-        }
+        },
+        "like": "Like stream",
+        "unlike": "Unlike stream",
+        "likes": "likes",
+        "accessDeniedTitle": "Stream unavailable",
+        "accessDeniedMessage": "You cannot watch this stream.",
+        "closeNotice": "Back to home"
     },
     "donation": {
         "title": "Donate",
@@ -289,7 +354,8 @@
             "ended": "This stream has ended and cannot receive donations.",
             "busy": "The room is processing another action. Please try again.",
             "conflict": "This request was used for another donation. Please reload the page.",
-            "failed": "The donation could not be confirmed. You can retry with the same content."
+            "failed": "The donation could not be confirmed. You can retry with the same content.",
+            "chatBanned": "You are banned in this room and cannot donate."
         }
     },
     "overlay": {
@@ -305,7 +371,9 @@
         "cancel": "Cancel",
         "saveError": "Could not save overlay settings. Please try again.",
         "previewName": "Viewer",
-        "previewMessage": "This is a donation overlay preview."
+        "previewMessage": "This is a donation overlay preview.",
+        "duration": "Display duration",
+        "seconds": "{count} seconds"
     },
     "moderation": {
         "manage": "Manage chat bans",
@@ -327,7 +395,9 @@
             "invalid": "Choose 5, 15, 30 minutes or permanent. The reason must be 200 characters or fewer.",
             "protected": "You cannot ban the host, an admin or yourself.",
             "failed": "The action failed. Please try again."
-        }
+        },
+        "cannotDonate": "While banned, you cannot chat or donate.",
+        "startedAt": "Banned at {time}"
     },
     "watch": {
         "notFound": "Video not found.",

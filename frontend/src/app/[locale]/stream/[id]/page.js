@@ -12,6 +12,9 @@ export default async function StreamPage({ params }) {
     const result = await serverApiGet(`/streams/${encodeURIComponent(id)}`);
 
     if (result.status === 401) return <StreamLoginPrompt />;
+    if (result.status === 403 && result.data?.error?.code === 'STREAM_ACCESS_BANNED') {
+        redirect({ href: '/?streamAccess=blocked', locale: await getLocale() });
+    }
 
     if (!result.ok || !result.data?.stream) {
         const t = await getTranslations('streamRoom');
@@ -27,5 +30,5 @@ export default async function StreamPage({ params }) {
     if (result.data.state?.status === 'ENDED' || result.data.stream.status === 'ENDED') {
         redirect({ href: user?.id === result.data.stream.owner.id ? '/dashboard' : '/', locale: await getLocale() });
     }
-    return <StreamRoom key={result.data.stream.id} stream={result.data.stream} initialState={result.data.state} user={user} />;
+    return <StreamRoom key={result.data.stream.id} stream={result.data.stream} initialState={result.data.state} initialLikes={result.data.likes} user={user} />;
 }

@@ -59,10 +59,10 @@ export default function ChatModeration({ streamId, target, onClose, refreshKey }
         onClose();
     }
 
-    async function unban(userId) {
+    async function unban(item) {
         setBusy(true);
         setError(null);
-        const response = await apiFetch(`/streams/${streamId}/bans/${encodeURIComponent(userId)}`, { method: 'DELETE' });
+        const response = await apiFetch(`/streams/${streamId}/bans/${encodeURIComponent(item.userId)}/${encodeURIComponent(item.streamId)}`, { method: 'DELETE' });
         setBusy(false);
         if (response.ok) setReload((value) => value + 1);
         else setError('failed');
@@ -90,11 +90,12 @@ export default function ChatModeration({ streamId, target, onClose, refreshKey }
                         {loading && <CircularProgress size={24} />}
                         {!loading && !result.bans.length && <Typography>{t('empty')}</Typography>}
                         {result.bans.map((item) => (
-                            <Box key={item.userId} sx={{ borderBottom: 1, borderColor: 'divider', pb: 1, overflowWrap: 'anywhere' }}>
+                            <Box key={`${item.streamId}:${item.userId}`} sx={{ borderBottom: 1, borderColor: 'divider', pb: 1, overflowWrap: 'anywhere' }}>
                                 <Typography sx={{ fontWeight: 700 }}>{item.user.name}</Typography>
+                                <Typography variant="body2">{t('startedAt', { time: format.dateTime(new Date(item.createdAt), { dateStyle: 'short', timeStyle: 'short' }) })}</Typography>
                                 <Typography variant="body2">{item.expiresAt ? t('until', { time: format.dateTime(new Date(item.expiresAt), { dateStyle: 'short', timeStyle: 'short' }) }) : t('permanent')}</Typography>
                                 {item.reason && <Typography variant="body2">{item.reason}</Typography>}
-                                <Button size="small" onClick={() => unban(item.userId)} disabled={busy}>{t('unban')}</Button>
+                                <Button size="small" onClick={() => unban(item)} disabled={busy}>{t('unban')}</Button>
                             </Box>
                         ))}
                         {result.totalPages > 1 && <Pagination page={page} count={result.totalPages} onChange={(_, value) => setPage(value)} />}
