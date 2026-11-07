@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Box, Typography } from '@mui/material';
 
-export default function DonationOverlay({ donation, onComplete, geometry, preview = false, onGeometryChange, disabled = false }) {
+export default function DonationOverlay({ donation, onComplete, geometry, durationSeconds = 5, preview = false, onGeometryChange, disabled = false }) {
     const t = useTranslations('donation');
     const controls = useTranslations('overlay');
     const format = useFormatter();
@@ -60,9 +60,9 @@ export default function DonationOverlay({ donation, onComplete, geometry, previe
 
     useEffect(() => {
         if (!donation || preview) return;
-        const timer = setTimeout(onComplete, 5000);
+        const timer = setTimeout(onComplete, durationSeconds * 1000);
         return () => clearTimeout(timer);
-    }, [donation?.id, onComplete, preview]);
+    }, [donation?.id, onComplete, preview, durationSeconds]);
 
     if (!donation) return null;
 

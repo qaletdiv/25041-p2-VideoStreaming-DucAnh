@@ -27,6 +27,10 @@ export function getVideoResource(publicId) {
     return adminRequest('GET', `/resources/video/upload/${encodeURIComponent(publicId)}?media_metadata=true`);
 }
 
+export function getImageResource(publicId) {
+    return adminRequest('GET', `/resources/image/upload/${encodeURIComponent(publicId)}`);
+}
+
 // Xóa asset video khỏi Cloudinary (invalidate để xóa cache CDN)
 export function deleteVideoResource(publicId) {
     return adminRequest('DELETE', `/resources/video/upload?public_ids[]=${encodeURIComponent(publicId)}&invalidate=true`);

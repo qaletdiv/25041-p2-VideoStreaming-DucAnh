@@ -7,8 +7,17 @@ export async function createStream(req, res) {
 }
 
 export async function listStreams(req, res) {
-    const streams = await streamService.listStreams();
-    res.json({ streams });
+    res.json(await streamService.listStreams(req.validatedQuery));
+}
+
+export async function streamLikes(req, res) {
+    res.json(await streamService.getStreamLikes(req.params.id, req.user?.id));
+}
+
+export async function setStreamLike(req, res) {
+    const result = await streamService.setStreamLike(req.params.id, req.user, req.method === 'POST');
+    req.app.get('io').to(`stream:${req.params.id}`).emit('stream:likes-changed', { count: result.count });
+    res.json(result);
 }
 
 export async function updateStreamOverlay(req, res) {
