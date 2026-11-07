@@ -4,7 +4,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import Hls from 'hls.js';
 import { io } from 'socket.io-client';
 import {
-    Alert, Box, Button, Card, CardContent, Chip, Divider, Slider,
+    Alert, Box, Button, Card, CardContent, Chip, Divider, IconButton, Slider,
     Menu, MenuItem, Stack, TextField, Typography,
 } from '@mui/material';
 import { Link, useRouter } from '@/i18n/navigation';
@@ -14,11 +14,13 @@ import DonationPanel from '@/components/stream/DonationPanel';
 import DonationOverlay from '@/components/stream/DonationOverlay';
 import OverlaySettings from '@/components/stream/OverlaySettings';
 import ChatModeration from '@/components/stream/ChatModeration';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const socketUrl = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
 const receivedState = (value) => value ? { ...value, receivedAt: Date.now() } : null;
 
-export default function StreamRoom({ stream, initialState, user }) {
+export default function StreamRoom({ stream, initialState, initialLikes, user }) {
     const t = useTranslations('streamRoom');
     const overlayText = useTranslations('overlay');
     const moderationText = useTranslations('moderation');
@@ -52,6 +54,7 @@ export default function StreamRoom({ stream, initialState, user }) {
     const [overlay, setOverlay] = useState(stream.donationOverlay);
     const [overlayDraft, setOverlayDraft] = useState(null);
     const [overlayBusy, setOverlayBusy] = useState(false);
+    const [likes, setLikes] = useState(initialLikes ?? { count: 0, liked: false });
     const seenDonations = useRef(new Set());
     const finishDonation = useCallback(() => {
         setDonationQueue((previous) => previous.slice(1));
@@ -96,6 +99,10 @@ export default function StreamRoom({ stream, initialState, user }) {
                     leaveEndedStream();
                     return;
                 }
+                if (reply?.code === 'STREAM_ACCESS_BANNED') {
+                    router.replace('/?streamAccess=blocked');
+                    return;
+                }
                 if (!reply?.ok) {
                     setError(reply?.code ?? 'CONNECTION_ERROR');
                     return;
@@ -117,6 +124,10 @@ export default function StreamRoom({ stream, initialState, user }) {
         });
         socket.on('stream:state', (next) => setState(receivedState(next)));
         socket.on('stream:overlay', setOverlay);
+        socket.on('stream:likes-changed', ({ count }) => setLikes((current) => ({ ...current, count })));
+        socket.on('stream:access-banned', ({ streamId: bannedStreamId }) => {
+            if (bannedStreamId === stream.id) router.replace('/');
+        });
         socket.on('stream:ended', ({ streamId }) => {
             if (streamId === stream.id) leaveEndedStream();
         });
@@ -124,7 +135,10 @@ export default function StreamRoom({ stream, initialState, user }) {
             setMessages((previous) => [...previous, message].slice(-100));
         });
         socket.on('stream:chat-ban', (reply) => {
-            if (reply.streamId === stream.id) receiveChatBan(reply);
+            if (reply.streamId === stream.id && reply.ban) {
+                receiveChatBan(reply);
+                router.replace('/');
+            }
         });
         socket.on('stream:moderation-changed', () => setModerationRefresh((value) => value + 1));
         socket.on('stream:donation', (donation) => {
@@ -213,6 +227,14 @@ export default function StreamRoom({ stream, initialState, user }) {
         }
     }
 
+    async function toggleLike() {
+        if (!user) { router.push('/login'); return; }
+        const result = await apiFetch(`/streams/${stream.id}/likes`, { method: likes.liked ? 'DELETE' : 'POST' });
+        if (result.ok) setLikes(result.data);
+        else if (result.status === 401) { router.replace('/login'); router.refresh(); }
+        else setError(result.data?.error?.code ?? 'CONNECTION_ERROR');
+    }
+
     function sendChat(event) {
         event.preventDefault();
         const text = chatText.trim();
@@ -245,6 +267,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                         <DonationOverlay
                             donation={overlayDraft ? { id: 'preview', amount: 10000, user: { name: overlayText('previewName') }, message: overlayText('previewMessage') } : donationQueue[0]}
                             geometry={overlayDraft ?? overlay}
+                            durationSeconds={overlay.durationSeconds ?? 5}
                             preview={Boolean(overlayDraft)} onComplete={finishDonation}
                             onGeometryChange={setOverlayDraft} disabled={overlayBusy}
                         />
@@ -267,6 +290,12 @@ export default function StreamRoom({ stream, initialState, user }) {
                             <Typography variant="body2" color="text.secondary">
                                 {t('owner', { name: stream.owner.name })} · {t('viewers', { count: viewers })}
                             </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                <IconButton color={likes.liked ? 'error' : 'default'} onClick={toggleLike} aria-label={t(likes.liked ? 'unlike' : 'like')}>
+                                    {likes.liked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                </IconButton>
+                                <Typography variant="body2">{format.number(likes.count)} {t('likes')}</Typography>
+                            </Box>
                             <Typography variant="body2" sx={{ mt: 1 }}>{stream.video.title}</Typography>
                             <Button onClick={() => setMuted((value) => !value)} sx={{ mt: 1 }}>
                                 {muted ? t('unmute') : t('mute')}
@@ -348,7 +377,7 @@ export default function StreamRoom({ stream, initialState, user }) {
                 </Card>
             </Stack>
             {error && <Alert severity="error" sx={{ mt: 2 }}>{t(`errors.${error}`)}</Alert>}
-            {!isCreator && <DonationPanel streamId={stream.id} user={user} />}
+            {!isCreator && <DonationPanel streamId={stream.id} user={user} chatBan={chatBan} />}
         </Box>
     );
 }

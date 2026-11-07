@@ -4,10 +4,16 @@ export const createStreamSchema = z.object({
     title: z.string().trim().min(1).max(200),
     videoId: z.string().min(1).max(100),
     requireAuth: z.boolean().default(false),
+    coverPublicId: z.string().trim().min(1).max(500).regex(/^[\w./-]+$/).optional(),
 });
 
 export const streamIdSchema = z.object({
     id: z.string().min(1).max(100),
+});
+
+export const listStreamsSchema = z.object({
+    page: z.coerce.number().int().min(1).max(100000).default(1),
+    limit: z.coerce.number().int().min(1).max(24).default(24),
 });
 
 export const streamOverlaySchema = z.object({
@@ -15,6 +21,7 @@ export const streamOverlaySchema = z.object({
     y: z.number().int().min(0).max(100),
     width: z.number().int().min(20).max(100),
     height: z.number().int().min(15).max(100),
+    durationSeconds: z.number().int().min(1).max(60).default(5),
 }).refine((value) => value.x + value.width <= 100 && value.y + value.height <= 100, {
     message: 'Overlay must stay inside the video',
 });

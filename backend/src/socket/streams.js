@@ -5,6 +5,7 @@ import { verifyToken } from '../lib/jwt.js';
 import { SESSION_COOKIE } from '../lib/sessionCookie.js';
 import { findActiveUserById } from '../services/auth.service.js';
 import { getStreamState, heartbeatViewer } from '../services/streamState.service.js';
+import { isPermanentlyBanned } from '../services/stream.service.js';
 import { listRecentMessages, publishMessage } from '../services/chat.service.js';
 import { getActiveChatBan } from '../services/chatBan.service.js';
 import { createOwnerPresence } from './ownerPresence.js';
@@ -84,6 +85,9 @@ export function registerStreamSockets(io) {
                 }
                 if (stream.requireAuth && !socket.data.user) {
                     return ack({ ok: false, code: 'UNAUTHENTICATED' });
+                }
+                if (socket.data.user && await isPermanentlyBanned(stream.ownerId, socket.data.user.id)) {
+                    return ack({ ok: false, code: 'STREAM_ACCESS_BANNED' });
                 }
 
                 const state = await getStreamState(streamId);

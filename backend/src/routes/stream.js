@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticate, optionalAuthenticate } from '../middleware/authenticate.js';
 import { validate } from '../middleware/validate.js';
-import { createStreamSchema, streamIdSchema, streamActionSchema, streamOverlaySchema } from '../validations/stream.js';
+import { createStreamSchema, streamIdSchema, streamActionSchema, streamOverlaySchema, listStreamsSchema } from '../validations/stream.js';
 import * as streamController from '../controllers/stream.controller.js';
 import * as donationController from '../controllers/donation.controller.js';
 import { createDonationSchema, listDonationsSchema } from '../validations/donation.js';
@@ -11,11 +11,15 @@ import { createChatBanSchema, chatBanParamsSchema, listChatBansSchema } from '..
 const router = Router();
 
 router.post('/', authenticate, validate(createStreamSchema), streamController.createStream);
-router.get('/', streamController.listStreams);
+router.get('/', validate(listStreamsSchema, 'query'), streamController.listStreams);
+router.get('/:id/likes', optionalAuthenticate, validate(streamIdSchema, 'params'), streamController.streamLikes);
+router.post('/:id/likes', authenticate, validate(streamIdSchema, 'params'), streamController.setStreamLike);
+router.delete('/:id/likes', authenticate, validate(streamIdSchema, 'params'), streamController.setStreamLike);
 router.get('/:id', optionalAuthenticate, validate(streamIdSchema, 'params'), streamController.getStream);
 router.get('/:id/bans', authenticate, validate(streamIdSchema, 'params'), validate(listChatBansSchema, 'query'), chatBanController.listChatBans);
 router.post('/:id/bans', authenticate, validate(streamIdSchema, 'params'), validate(createChatBanSchema), chatBanController.createChatBan);
 router.delete('/:id/bans/:userId', authenticate, validate(chatBanParamsSchema, 'params'), chatBanController.removeChatBan);
+router.delete('/:id/bans/:userId/:banStreamId', authenticate, validate(chatBanParamsSchema, 'params'), chatBanController.removeChatBan);
 router.put('/:id/overlay', authenticate, validate(streamIdSchema, 'params'), validate(streamOverlaySchema), streamController.updateStreamOverlay);
 router.get('/:id/donations', authenticate, validate(streamIdSchema, 'params'), validate(listDonationsSchema, 'query'), donationController.listDonations);
 router.post('/:id/donations', authenticate, validate(streamIdSchema, 'params'), validate(createDonationSchema), donationController.createDonation);

@@ -10,12 +10,32 @@ import { apiFetch } from '@/lib/api';
 import { Link } from '@/i18n/navigation';
 import { createStreamSchema } from '@/lib/validations/stream';
 
+function uploadCover({ file, credentials, onProgress }) {
+    return new Promise((resolve, reject) => {
+        const body = new FormData();
+        body.append('file', file); body.append('api_key', credentials.apiKey);
+        body.append('timestamp', String(credentials.timestamp)); body.append('signature', credentials.signature);
+        body.append('folder', credentials.folder);
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${credentials.cloudName}/image/upload`);
+        xhr.upload.onprogress = (event) => { if (event.lengthComputable) onProgress(Math.round(event.loaded * 100 / event.total)); };
+        xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve(JSON.parse(xhr.responseText));
+            else reject(new Error('coverUploadFailed'));
+        };
+        xhr.onerror = () => reject(new Error('coverUploadFailed'));
+        xhr.send(body);
+    });
+}
+
 export default function CreateStreamForm({ videos }) {
     const t = useTranslations('streamCreate');
     const [errors, setErrors] = useState({});
     const [generalError, setGeneralError] = useState(null);
     const [createdId, setCreatedId] = useState(null);
     const [isPending, startTransition] = useTransition();
+    const [cover, setCover] = useState(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
 
     function handleSubmit(event) {
         event.preventDefault();
@@ -34,13 +54,21 @@ export default function CreateStreamForm({ videos }) {
         }
 
         startTransition(async () => {
-            const result = await apiFetch('/streams', { method: 'POST', body: parsed.data });
+            let coverPublicId;
+            if (cover) {
+                const signature = await apiFetch('/uploads/signature', { method: 'POST' });
+                if (!signature.ok) { setGeneralError('coverUploadFailed'); return; }
+                try {
+                    const asset = await uploadCover({ file: cover, credentials: signature.data.data, onProgress: setUploadProgress });
+                    coverPublicId = asset.public_id;
+                } catch { setGeneralError('coverUploadFailed'); return; }
+            }
+            const result = await apiFetch('/streams', { method: 'POST', body: { ...parsed.data, ...(coverPublicId ? { coverPublicId } : {}) } });
             if (result.ok) {
                 setCreatedId(result.data.stream.id);
             } else {
-                setGeneralError(result.data?.error?.code === 'VIDEO_NOT_FOUND'
-                    ? 'videoUnavailable'
-                    : 'serverError');
+                const codes = { VIDEO_NOT_FOUND: 'videoUnavailable', INVALID_COVER_IMAGE: 'coverUploadFailed', COVER_FOLDER_MISMATCH: 'coverUploadFailed' };
+                setGeneralError(codes[result.data?.error?.code] ?? 'serverError');
             }
         });
     }
@@ -74,6 +102,16 @@ export default function CreateStreamForm({ videos }) {
                             slotProps={{ htmlInput: { maxLength: 200 } }}
                             required
                         />
+                        <Button component="label" variant="outlined" disabled={isPending}>
+                            {cover?.name ?? t('coverImage')}
+                            <input hidden type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => {
+                                const file = event.target.files?.[0] ?? null;
+                                const validType = file && ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+                                setCover(validType && file.size <= 5 * 1024 * 1024 ? file : null);
+                                setGeneralError(file && (!validType || file.size > 5 * 1024 * 1024) ? 'coverTooLarge' : null);
+                            }} />
+                        </Button>
+                        {isPending && cover && <Typography variant="caption">{t('coverUploading', { progress: uploadProgress })}</Typography>}
                         <TextField
                             name="videoId"
                             select

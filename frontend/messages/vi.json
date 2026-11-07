@@ -1,25 +1,79 @@
 {
     "videoStatistics": {
-        "title": "Tổng quan & Phân tích video", "allVideos": "Tất cả video", "myVideos": "Video của bạn", "selectedOwner": "Video của tài khoản đã chọn",
-        "live": "Đang cập nhật trực tiếp", "reconnecting": "Đang kết nối lại", "refresh": "Tải lại", "chooseOwner": "Chọn tài khoản",
-        "range": "Khoảng thời gian", "ranges": { "today": "Hôm nay", "7d": "7 ngày qua", "30d": "30 ngày qua", "custom": "Tùy chỉnh" },
-        "group": "Nhóm biểu đồ", "groups": { "day": "Theo ngày", "week": "Theo tuần", "month": "Theo tháng" },
-        "from": "Từ ngày", "to": "Đến ngày", "apply": "Áp dụng", "invalidDates": "Chọn ngày hợp lệ, ngày bắt đầu không sau ngày kết thúc và tối đa 366 ngày.",
-        "period": "Đang xem: {from} – {to} · Giờ Việt Nam", "loading": "Đang tải dữ liệu…", "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
-        "totalVideos": "Video tải lên trong kỳ", "totalViews": "Lượt xem trong kỳ", "trend": "Xu hướng lượt xem", "top": "Top 10 video được xem nhiều nhất", "noViews": "Chưa có lượt xem trong khoảng thời gian này.",
-        "table": "Phân tích video", "search": "Tìm theo tiêu đề video", "sort": "Sắp xếp theo", "order": "Thứ tự", "asc": "Tăng dần", "desc": "Giảm dần",
-        "columns": { "title": "Video", "duration": "Thời lượng", "views": "Lượt xem trong kỳ", "createdAt": "Ngày tạo" },
-        "empty": "Không có video phù hợp.", "pageSize": "Số dòng mỗi trang", "results": "{count, number} video"
+        "title": "Tổng quan & Phân tích video",
+        "allVideos": "Tất cả video",
+        "myVideos": "Video của bạn",
+        "selectedOwner": "Video của tài khoản đã chọn",
+        "live": "Đang cập nhật trực tiếp",
+        "reconnecting": "Đang kết nối lại",
+        "refresh": "Tải lại",
+        "chooseOwner": "Chọn tài khoản",
+        "range": "Khoảng thời gian",
+        "ranges": {
+            "today": "Hôm nay",
+            "7d": "7 ngày qua",
+            "30d": "30 ngày qua",
+            "custom": "Tùy chỉnh"
+        },
+        "group": "Nhóm biểu đồ",
+        "groups": {
+            "day": "Theo ngày",
+            "week": "Theo tuần",
+            "month": "Theo tháng"
+        },
+        "from": "Từ ngày",
+        "to": "Đến ngày",
+        "apply": "Áp dụng",
+        "invalidDates": "Chọn ngày hợp lệ, ngày bắt đầu không sau ngày kết thúc và tối đa 366 ngày.",
+        "period": "Đang xem: {from} – {to} · Giờ Việt Nam",
+        "loading": "Đang tải dữ liệu…",
+        "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
+        "totalVideos": "Video tải lên trong kỳ",
+        "totalViews": "Lượt xem trong kỳ",
+        "trend": "Xu hướng lượt xem",
+        "top": "Top 10 video được xem nhiều nhất",
+        "noViews": "Chưa có lượt xem trong khoảng thời gian này.",
+        "table": "Phân tích video",
+        "search": "Tìm theo tiêu đề video",
+        "sort": "Sắp xếp theo",
+        "order": "Thứ tự",
+        "asc": "Tăng dần",
+        "desc": "Giảm dần",
+        "columns": {
+            "title": "Video",
+            "duration": "Thời lượng",
+            "views": "Lượt xem trong kỳ",
+            "createdAt": "Ngày tạo"
+        },
+        "empty": "Không có video phù hợp.",
+        "pageSize": "Số dòng mỗi trang",
+        "results": "{count, number} video"
     },
     "statistics": {
-        "title": "Thống kê stream", "refresh": "Tải lại", "chooseOwner": "Chọn streamer từ danh sách người dùng",
-        "all": "Tất cả streamer", "owner": "Streamer: {name}", "total": "Tổng số phòng", "active": "Phòng chưa kết thúc",
-        "donationCount": "Số lượt donate", "donationAmount": "Tổng donate", "peak": "Kết nối cao nhất trong phòng stream", "average": "Kết nối trung bình trong phòng stream",
+        "title": "Thống kê stream",
+        "refresh": "Tải lại",
+        "chooseOwner": "Chọn streamer từ danh sách người dùng",
+        "all": "Tất cả streamer",
+        "owner": "Streamer: {name}",
+        "total": "Tổng số phòng",
+        "active": "Phòng chưa kết thúc",
+        "donationCount": "Số lượt donate",
+        "donationAmount": "Tổng donate",
+        "peak": "Kết nối cao nhất trong phòng stream",
+        "average": "Kết nối trung bình trong phòng stream",
         "noData": "Chưa có dữ liệu",
-        "rooms": "Danh sách phòng stream", "room": "Phòng", "streamer": "Streamer", "status": "Trạng thái", "created": "Ngày tạo", "detail": "Chi tiết",
-        "empty": "Chưa có phòng stream.", "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
-        "chart": "Số kết nối xem theo thời gian", "chartNote": "Biểu đồ hiển thị tối đa 120 mốc ghi nhận gần nhất của phòng stream. Các chỉ số phía trên tính từ toàn bộ dữ liệu của phòng.",
-        "emptySamples": "Phòng stream chưa có dữ liệu người xem. Hãy phát stream ít nhất 10 giây để hệ thống ghi nhận.", "close": "Đóng"
+        "rooms": "Danh sách phòng stream",
+        "room": "Phòng",
+        "streamer": "Streamer",
+        "status": "Trạng thái",
+        "created": "Ngày tạo",
+        "detail": "Chi tiết",
+        "empty": "Chưa có phòng stream.",
+        "error": "Không thể tải thống kê. Kiểm tra kết nối và quyền truy cập rồi thử lại.",
+        "chart": "Số kết nối xem theo thời gian",
+        "chartNote": "Biểu đồ hiển thị tối đa 120 mốc ghi nhận gần nhất của phòng stream. Các chỉ số phía trên tính từ toàn bộ dữ liệu của phòng.",
+        "emptySamples": "Phòng stream chưa có dữ liệu người xem. Hãy phát stream ít nhất 10 giây để hệ thống ghi nhận.",
+        "close": "Đóng"
     },
     "adminUsers": {
         "statistics": "Thống kê",
@@ -163,7 +217,9 @@
         "noVideos": "Không có video nào khớp với bộ lọc.",
         "previous": "Trước",
         "next": "Sau",
-        "pageInfo": "Trang {current} / {total}"
+        "pageInfo": "Trang {current} / {total}",
+        "loadMoreStreams": "T\u1ea3i th\u00eam ph\u00f2ng stream",
+        "loadingStreams": "\u0110ang t\u1ea3i..."
     },
     "upload": {
         "title": "Upload Video",
@@ -227,8 +283,11 @@
             "titleMax": "Tên phòng tối đa 200 ký tự",
             "videoRequired": "Vui lòng chọn video",
             "videoUnavailable": "Video này chưa sẵn sàng hoặc bạn không có quyền sử dụng.",
-            "serverError": "Không thể tạo phòng, vui lòng thử lại."
-        }
+            "serverError": "Không thể tạo phòng, vui lòng thử lại.",
+            "coverTooLarge": "\u1ea2nh ph\u1ea3i l\u00e0 JPG, PNG ho\u1eb7c WebP v\u00e0 kh\u00f4ng v\u01b0\u1ee3t qu\u00e1 5 MB."
+        },
+        "coverImage": "T\u1ea3i \u1ea3nh b\u00eca Stream (JPG, PNG, WebP, t\u1ed1i \u0111a 5 MB)",
+        "coverUploading": "\u0110ang t\u1ea3i \u1ea3nh b\u00eca: {progress}%"
     },
     "streamRoom": {
         "notFound": "Không tìm thấy phòng Stream.",
@@ -266,7 +325,13 @@
             "INVALID_STREAM_ACTION": "Thao tác phát không hợp lệ.",
             "STREAM_BUSY": "Phòng đang xử lý một thao tác khác.",
             "FORBIDDEN": "Bạn không có quyền điều khiển phòng."
-        }
+        },
+        "like": "Th\u00edch Stream",
+        "unlike": "B\u1ecf th\u00edch Stream",
+        "likes": "l\u01b0\u1ee3t th\u00edch",
+        "accessDeniedTitle": "Kh\u00f4ng th\u1ec3 xem Stream",
+        "accessDeniedMessage": "B\u1ea1n kh\u00f4ng th\u1ec3 xem stream n\u00e0y",
+        "closeNotice": "V\u1ec1 trang ch\u1ee7"
     },
     "donation": {
         "title": "Donate",
@@ -289,7 +354,8 @@
             "ended": "Phòng đã kết thúc, không thể gửi donate.",
             "busy": "Phòng đang xử lý thao tác khác. Vui lòng thử lại.",
             "conflict": "Yêu cầu đã được dùng cho donate khác. Vui lòng tải lại trang.",
-            "failed": "Chưa xác nhận gửi donate thành công. Bạn có thể thử lại cùng nội dung."
+            "failed": "Chưa xác nhận gửi donate thành công. Bạn có thể thử lại cùng nội dung.",
+            "chatBanned": "B\u1ea1n \u0111ang b\u1ecb c\u1ea5m trong ph\u00f2ng n\u00e0y n\u00ean kh\u00f4ng th\u1ec3 donate."
         }
     },
     "overlay": {
@@ -305,7 +371,9 @@
         "cancel": "Hủy",
         "saveError": "Không lưu được cấu hình overlay. Vui lòng thử lại.",
         "previewName": "Người xem",
-        "previewMessage": "Đây là bản xem trước overlay donate."
+        "previewMessage": "Đây là bản xem trước overlay donate.",
+        "duration": "Th\u1eddi gian hi\u1ec3n th\u1ecb",
+        "seconds": "{count} gi\u00e2y"
     },
     "moderation": {
         "manage": "Quản lý cấm chat",
@@ -327,7 +395,9 @@
             "invalid": "Thời hạn phải là 5, 15, 30 phút hoặc vĩnh viễn. Lý do tối đa 200 ký tự.",
             "protected": "Không thể cấm chủ phòng, Admin hoặc chính mình.",
             "failed": "Không thực hiện được thao tác. Vui lòng thử lại."
-        }
+        },
+        "cannotDonate": "Trong th\u1eddi gian b\u1ecb c\u1ea5m, b\u1ea1n kh\u00f4ng th\u1ec3 chat ho\u1eb7c donate.",
+        "startedAt": "B\u1eaft \u0111\u1ea7u c\u1ea5m l\u00fac {time}"
     },
     "watch": {
         "notFound": "Không tìm thấy video.",

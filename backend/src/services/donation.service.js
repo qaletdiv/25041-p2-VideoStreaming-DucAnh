@@ -2,6 +2,7 @@ import { prisma } from '../lib/prisma.js';
 import { HttpError } from '../lib/httpError.js';
 import { getStream } from './stream.service.js';
 import { withStreamControlLock } from './streamState.service.js';
+import { getActiveChatBan } from './chatBan.service.js';
 
 const select = {
     id: true, streamId: true, amount: true, message: true, createdAt: true,
@@ -27,6 +28,9 @@ export async function createDonation(streamId, user, input) {
         const { stream, state } = await getStream(streamId, user);
         if (stream.owner.id === user.id) {
             throw new HttpError(403, 'FORBIDDEN', 'The stream owner cannot donate to their own stream');
+        }
+        if (await getActiveChatBan(streamId, user.id)) {
+            throw new HttpError(403, 'CHAT_BANNED', 'Chat-banned users cannot donate');
         }
         const existing = await prisma.donation.findUnique({
             where: { userId_requestId: { userId: user.id, requestId: input.requestId } },
